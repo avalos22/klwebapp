@@ -1,4 +1,4 @@
-<div class="p-2 lg:p-12 bg-white border-b border-gray-200">
+<div class="p-2 ms-12 me-12 bg-white">
     <!-- Service buttons -->
     <div>
         <x-button class="bg-red-500">
