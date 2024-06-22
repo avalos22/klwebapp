@@ -9,15 +9,25 @@ export default {
         './vendor/laravel/jetstream/**/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        // './resources/js/**/*.js',// add by JA
     ],
 
     theme: {
+        container: {
+            center: true,
+        },
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
         },
     },
-
+    // module.exports = {
+    //     theme: {
+    //         container: {
+    //         center: true,
+    //         },
+    //     },
+    // }
     plugins: [forms, typography],
 };
