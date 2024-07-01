@@ -21,7 +21,7 @@ Route::middleware([
     
     // Ruta para reports
     Route::get('/reports', function () {
-        return view('dashboard');
+        return "reports";//view('dashboard');
     })->name('reports');
     
     // Ruta para coordinators
@@ -33,4 +33,9 @@ Route::middleware([
     Route::get('/directory', function () {
         return view('dashboard');
     })->name('directory');
+
+    // Ruta para users
+    Route::get('/users', function () {
+        return view('users');
+    })->name('users');
 });

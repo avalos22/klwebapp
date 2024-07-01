@@ -20,6 +20,15 @@
         <!-- Main content -->
         <main class="flex-1">
             @livewire('navigation-menu')
+           
+            @if (isset($header))
+                <header class="bg-white shadow">
+                    <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
+
             <div>
                 {{ $slot }}
             </div>
