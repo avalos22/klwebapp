@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class SidePanel extends Component
 {
-    public $open = true;
+    public $closed = false;
 
     public function toggleMenu()
     {

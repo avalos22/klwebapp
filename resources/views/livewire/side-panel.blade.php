@@ -25,11 +25,14 @@
             <x-side-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
                 Reports
             </x-side-nav-link>
-            <x-side-nav-link href="{{ route('coordinators') }}" :active="request()->routeIs('coordinators')">
-                Coordinators
+            <x-side-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+                Users
             </x-side-nav-link>
-            <x-side-nav-link href="{{ route('directory') }}" :active="request()->routeIs('directory')">
+            <x-side-nav-link href="{{ route('business-directory.index') }}" :active="request()->routeIs('business-directory.index')">
                 Directory
+            </x-side-nav-link>
+            <x-side-nav-link href="{{ route('catalog') }}" :active="request()->routeIs('catalog')">
+                Catalog Data
             </x-side-nav-link>
         </nav>
     </aside>
