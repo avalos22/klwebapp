@@ -124,12 +124,46 @@
                             </div>
                         </div>
                         <div class="w-full md:w-1/2 lg:w-1/2 xl:w-2/5 p-1">
-                            <img src="" alt="Pic Profile">
+                            {{-- <img src="" alt="Pic Profile">
                             <x-label value="{{ __('Add Picture') }}" />
                             <x-input type="file" class="mt-1 block w-full" wire:model="picture" />
                             @error('picture')
                                 <span class="text-red-500">{{ $message }}</span>
-                            @enderror
+                            @enderror --}}
+
+                            <div x-data="{ photoName: null, photoPreview: null }" class="w-full md:w-1/2 lg:w-1/2 xl:w-2/5 p-1">
+                                <input type="file" id="photo" class="hidden" wire:model="picture"
+                                    x-ref="photo"
+                                    x-on:change="
+                                           photoName = $refs.photo.files[0].name;
+                                           const reader = new FileReader();
+                                           reader.onload = (e) => {
+                                               photoPreview = e.target.result;
+                                           };
+                                           reader.readAsDataURL($refs.photo.files[0]);
+                                   " />
+
+                                <x-label for="photo" value="{{ __('Add Picture') }}" />
+                            </div>
+                            <!-- Current Profile Photo -->
+                            <div class="mt-2" x-show="! photoPreview">
+                                {{-- <img src="" alt="Profile Photo" class=" bg-gray-600 h-56 w-56 object-cover"> --}}
+                                <div class="w-56 h-56 bg-gray-600 flex items-center justify-center text-4xl text-white font-s">
+                                    N/A
+                                 </div>
+                            </div>
+                            
+                            <!-- New Profile Photo Preview -->
+                            <div class="mt-2" x-show="photoPreview" style="display: none;">
+                                <span class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+                                    x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                                </span>
+                            </div>
+                            <x-secondary-button class="mt-2 me-2" type="button"
+                                x-on:click.prevent="$refs.photo.click()">
+                                {{ __('Select A New Photo') }}
+                            </x-secondary-button>
+
                         </div>
                     </div>
                 </div>
@@ -199,9 +233,11 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <!-- Botón para abrir el modal -->
-                                    
+
                                     <div>
-                                        <div><button @click="$dispatch('edit-user', { userId: {{ $user->id }} })">Edit</button></div>
+                                        <div><button
+                                                @click="$dispatch('edit-user', { userId: {{ $user->id }} })">Edit</button>
+                                        </div>
                                     </div>
                                     {{-- <a href="#" class="text-blue-600 hover:text-blue-900"
                                         wire:click.prevent="$emit('editUser', {{ $user->id }})">
