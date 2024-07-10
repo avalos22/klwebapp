@@ -26,9 +26,15 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name', // Added last_name to fillable
         'email',
         'password',
-        'role', // Asegúrate de que el campo 'role' esté en el array fillable
+        'role', // Ensure the 'role' field is in the fillable array
+        'phone', // Added phone to fillable
+        'job_title', // Added job_title to fillable
+        'office', // Added office to fillable
+        'birthday', // Added birthday to fillable
+        'date_of_hire', // Added date_of_hire to fillable
     ];
 
     /**
@@ -61,7 +67,9 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            // 'password' => 'hashed',
+            'birthday' => 'date', // Cast birthday as date
+            'date_of_hire' => 'date', // Cast date_of_hire as date
         ];
     }
 

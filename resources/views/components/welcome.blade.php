@@ -1,9 +1,13 @@
 <div class="p-2 ms-12 me-12 bg-white">
     <!-- Service buttons -->
     <div class="flex flex-wrap gap-x-2 gap-y-2">
-        <x-button class="bg-red-500">
+        {{-- <x-button class="bg-red-500">
             {{ __('FTL') }}
-        </x-button>
+        </x-button> --}}
+        <a href="{{ route('ftl.index') }}" class="inline-block bg-red-600 text-white py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline">
+            {{ __('FTL') }}
+        </a>
+        
         <x-button class="bg-red-500">
             {{ __('LTL') }}
         </x-button>

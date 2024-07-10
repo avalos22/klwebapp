@@ -3,12 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\BusinessDirectoryController;
+use App\Http\Controllers\FTLController;
 
 // Ruta para la página de inicio
-Route::get('/', function () {
-    // return view('auth.login');
-    return view('welcome');
-});
+
 
 // Grupo de rutas protegidas por autenticación
 Route::middleware([
@@ -17,7 +15,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
     // Ruta para el dashboard
-    Route::get('/dashboard', function () {
+    Route::get('/', function () {
         return view('dashboard');
     })->name('dashboard');
     
@@ -36,14 +34,18 @@ Route::middleware([
         return view('dashboard');
     })->name('directory');
 
+    // Ruta de los servicios
+    Route::resource('ftl', FTLController::class);
+
     // Grupo de rutas para Administración
     // Route::get('/users', function () {return view('users.index');})->name('users');
     // Grupo de rutas para Administración de Usuarios
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    // Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    // Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::resource('business-directory', BusinessDirectoryController::class);
+    Route::resource('users', UserController::class);
     // Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
 
 
