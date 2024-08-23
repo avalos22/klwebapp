@@ -71,43 +71,11 @@ Table documents {
     updated_at TIMESTAMP
 }
 
-// Tabla que define los tipos de accesorials
-Table accessorials {
-    id BIGINT [pk, increment]
-    name VARCHAR(255) // e.g., Team Driver, Hazmat, etc.
-    description VARCHAR(255)
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
-
-// Tabla intermedia para relacionar servicios con accesorials
-Table service_accessorials {
-    id BIGINT [pk, increment]
-    service_id BIGINT [ref: > services.id]
-    accessorial_id BIGINT [ref: > accessorials.id]
-    description TEXT
-    cost DECIMAL(10, 2)
-    currency ENUM('USD', 'MXN')
-    iva DECIMAL(10, 2)
-    ret DECIMAL(10, 2)
-    created_at TIMESTAMP 
-    updated_at TIMESTAMP
-}
-
-// Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'bonded'
-Table accessorials_bonded {
-    id BIGINT [pk, increment]
-    service_accessorial_id BIGINT [ref: > service_accessorials.id]
-    broker_name VARCHAR(255)// vamos a checar si se debe enlazar con suppliers
-    bond_number VARCHAR(255)
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
 
 // Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'discount'
-Table accessorials_discount {
+Table charges_discount {
     id BIGINT [pk, increment]
-    service_accessorial_id BIGINT [ref: > service_accessorials.id]
+    charge_id BIGINT [ref: > charges.id]
     supplier VARCHAR(255) // vamos a checar si se debe enlazar con suppliers
     discount DECIMAL(10, 2)
     discount_description TEXT
@@ -121,9 +89,9 @@ Table accessorials_discount {
 }
 
 // Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'other expenses'
-Table accessorials_other_expenses {
+Table charges_other_expenses {
     id BIGINT [pk, increment]
-    service_accessorial_id BIGINT [ref: > service_accessorials.id]
+    charge_id BIGINT [ref: > charges.id]
     supplier VARCHAR(255) // vamos a checar si se debe enlazar con suppliers
     amount DECIMAL(10, 2)
     payment_description TEXT
