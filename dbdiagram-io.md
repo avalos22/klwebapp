@@ -1,7 +1,17 @@
+TABLE exchange_rates {
+    id BIGINT [pk, increment]
+    currency_from ENUM('USD', 'MXN')  //-- Moneda de origen
+    currency_to ENUM('USD', 'MXN') //-- Moneda de destino
+    exchange_rate DECIMAL(10, 6) //-- Tipo de cambio (puedes ajustar la precisión si es necesario)
+    effective_date DATE //-- Fecha en la que el tipo de cambio es efectivo
+    created_at TIMESTAMP
+    updated_at TIMESTAMP 
+}
 
 TABLE services { // tabla general de servicios
   // Datos customer
   id BIGINT [pk, increment]
+  exchange_rate_id BIGINT [ref: > exchange_rates.id]
   user_id BIGINT [ref: > users.id]
   business_directory_id BIGINT [ref: > business_directory.id]
   rate_to_customer DECIMAL
