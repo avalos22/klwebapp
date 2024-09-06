@@ -38,6 +38,29 @@ TABLE services { // tabla general de servicios
   sub_services VARCHAR(255) //solo aplica para FTL Domestic USA, Domestic MX, door to door import, door to door export
 }
 
+Table to_collect {
+  id BIGINT [pk, increment]
+  service_id BIGINT [ref: > services.id] // Relaciona con la tabla services
+  total_shipping_cost DECIMAL
+  exchange_rate DECIMAL
+  freight_charges DECIMAL
+  accessory_charges DECIMAL
+  total_kronos_invoice DECIMAL
+  gross_profit DECIMAL
+  commission DECIMAL
+  net_profit DECIMAL
+  kronos_invoice_number DECIMAL
+  sat_kronos_invoice_number DECIMAL
+  invoice_sent ENUM('yes', 'no')
+  invoice_sent_date DATE
+  kronos_invoice_due_date DATE
+  number_of_days_overdue DECIMAL
+  payment_status ENUM('paid','pending','na')
+  payment_date DECIMAL
+  payment_addendum_attached VARCHAR
+  payment_sent ENUM('yes', 'no')
+}
+
 Table urgency_ltl {
   id BIGINT [pk, increment]
   type BIGINT [ref: > urgency_types.id] 
@@ -236,6 +259,24 @@ Table carriers {
   transfer_type ENUM('Esport, Import') // se usa en transfer
 }
 
+Table to_pay {
+  id BIGINT [pk, increment]
+  carriers BIGINT [ref: > carriers.id]
+  supplier_invoice_amount DECIMAL(10, 2)
+  supplier_invoice_number DECIMAL(10, 2)
+  invoice_date DATE
+  invoice_status ENUM('acepted, returned, rejected')
+  invoice_status_notes VARCHAR 
+  invoice_payment_status  ENUM('Pending, Paid, NA') 
+  invoice_due_date DATE
+  invoice_payment_date DATE
+  payment_term ENUM('PPD, PUE')
+  payment_complement_received ENUM('yes, no')
+  attachments VARCHAR 
+  advancement DECIMAL(10, 2)
+  remanent  VARCHAR
+}
+
 Table service_type_carrier_brokers {
     id BIGINT [pk, increment]
     name VARCHAR(50) // Bond creation, Entry creation, etc.
@@ -275,7 +316,7 @@ Table trailer_rental_carrier_details {
 
 Table charter_carrier_details {
   id BIGINT [pk, increment]
-  business_directory_id BIGINT [ref: > business_directory.id]
+  // business_directory_id BIGINT [ref: > business_directory.id]
   pickup_date DATE
   delivery_date_requested DATE
   time TIME
@@ -362,6 +403,7 @@ Table business_directory {
   credit_days INT                                  // Días de crédito
   credit_expiration_date DATE                      // Fecha de expiración del crédito
   free_loading_unloading_hours INT                 // Horas de carga y descarga gratuita
+  factory_company_id BIGINT [ref: > factory_company.id]
   notes TEXT                                       // Notas adicionales
   add_document TEXT                                // Campo para agregar URL de documentos
   document_expiration_date DATE                    // Fecha de expiración del documento
@@ -369,6 +411,14 @@ Table business_directory {
   tarifario TEXT                                   // Tarifario
   created_at TIMESTAMP                             // Fecha de creación
   updated_at TIMESTAMP                             // Fecha de última actualización
+}
+
+Table factory_company {
+  id BIGINT [pk, increment]
+  name varchar
+  notes varchar
+  created_at TIMESTAMP                             // Fecha de creación
+  updated_at TIMESTAMP 
 }
 
 Table contacts {
@@ -392,8 +442,6 @@ Table suppliers {
   usdot VARCHAR(20)                                // Número USDOT
   scac VARCHAR(20)                                 // Código SCAC
   caat VARCHAR(20)                                 // Código CAAT
-  ftl BOOLEAN                                      // Servicio FTL
-  ltl BOOLEAN                                      // Servicio LTL
   container_drayage BOOLEAN                        // Servicio de transporte de contenedores
   hand_carrier BOOLEAN                             // Servicio de mensajería
   trailer_rental BOOLEAN                           // Alquiler de remolques
@@ -404,6 +452,12 @@ Table suppliers {
   transfer BOOLEAN                                 // Servicio de transferencia
   created_at TIMESTAMP                             // Fecha de creación
   updated_at TIMESTAMP                             // Fecha de última actualización
+}
+
+Table services_suppliers {
+  id BIGINT [pk, increment]
+  supplier_id BIGINT [ref: > suppliers.id]
+  id_service_detail BIGINT [ref: > service_details.id]
 }
 
 Table supplier_equipments {
@@ -428,6 +482,7 @@ Table supplier_reviews {
 // Tabla de usuarios
 Table users {
   id BIGINT [pk, increment]
+  type ENUM('employe', 'customer')
   name VARCHAR(255)
   last_name VARCHAR(255)
   email VARCHAR(255) [unique]
@@ -444,7 +499,6 @@ Table users {
   job_title VARCHAR(255)
   office VARCHAR(255)
   birthday DATE
-  date_of_hire DATE
   created_at timestamp
   updated_at timestamp
 }
@@ -483,10 +537,41 @@ Table model_has_permissions {
   model_id varchar(255)
 }
 
-// Tabla de horas de trabajo del usuario
-Table user_working_hours {
+// Tabla Empleado
+Table employe {
     id BIGINT [pk, increment]
     user_id BIGINT [ref: > users.id]
+    date_of_hire DATE
+    street_address varchar
+    building_number number
+    neighborhood varchar
+    city varchar
+    state varchar
+    postal_code varchar
+    country varchar
+    NSS varchar
+    tax_status_certificate varchar
+    id_ine varchar
+    social_security_number varchar
+    proof_of_address varchar
+    emergency_contact_name varchar
+    emergency_contact_relationtship varchar
+    emergency_contact_phone varchar
+    bank_name varchar
+    account_number number
+    card_number number
+    clabe number
+    computer_brand varchar
+    computer_model varchar
+    computer_serial_number varchar
+    computer_color varchar
+    computer_charger_cable_recived varchar
+    cellphone_brand varchar
+    cellphone_model varchar
+    cellphone_model_number varchar
+    cellphone_serial_number varchar
+    cellphone_color varchar
+    cellphone_charger_cable_recived varchar
     monday_in TIME
     monday_out TIME
     tuesday_in TIME
@@ -504,3 +589,6 @@ Table user_working_hours {
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
+
+
+Ref: "to_pay"."id" < "to_pay"."supplier_invoice_amount"
