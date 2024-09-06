@@ -589,6 +589,3 @@ Table employe {
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
-
-
-Ref: "to_pay"."id" < "to_pay"."supplier_invoice_amount"
