@@ -542,17 +542,25 @@ Table model_has_permissions {
 
 Table employees {
     id BIGINT [pk, increment]
-    user_id BIGINT [ref: > users.id]    // Relación con usuarios
-    date_of_hire DATE                   // Fecha de contratación
-    address_id BIGINT [ref: > addresses.id]  // Relación con tabla de direcciones
-    NSS varchar                         // Número de Seguridad Social
-    tax_status_certificate varchar      // Certificado de estado fiscal
-    id_ine varchar                      // INE (Identificación oficial)
-    social_security_number varchar      // Número de seguro social
-    proof_of_address varchar            // Comprobante de domicilio
+    user_id BIGINT [ref: > users.id]              // Relación opcional con usuarios
+    name VARCHAR(255)                             // Nombre del empleado
+    last_name VARCHAR(255)                        // Apellido del empleado
+    email VARCHAR(255) [unique]                   // Correo electrónico del empleado
+    phone VARCHAR(20)                             // Teléfono
+    job_title VARCHAR(255)                        // Título del puesto
+    office VARCHAR(255)                           // Oficina
+    birthday DATE                                 // Fecha de nacimiento
+    date_of_hire DATE                             // Fecha de contratación
+    address_id BIGINT [ref: > addresses.id]        // Relación con la tabla de direcciones
+    NSS varchar                                   // Número de Seguridad Social
+    tax_status_certificate varchar                // Certificado de estado fiscal
+    id_ine varchar                                // INE (Identificación oficial)
+    social_security_number varchar                // Número de seguro social
+    proof_of_address varchar                      // Comprobante de domicilio
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
+
 
 Table addresses {
     id BIGINT [pk, increment]
@@ -600,3 +608,4 @@ Table work_schedule {
     time_in TIME
     time_out TIME
 }
+
