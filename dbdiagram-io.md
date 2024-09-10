@@ -106,41 +106,23 @@ Table documents {
     updated_at TIMESTAMP
 }
 
-// Tabla universal de cargos para las carreras
 Table charges {
     id BIGINT [pk, increment]
-    carriers BIGINT [ref: > carriers.id] 
-    charge_type_id BIGINT [ref: > charge_types.id] 
-    description TEXT
-    cost DECIMAL(10, 2)
-    currency ENUM('USD', 'MXN')
-    iva DECIMAL(10, 2)
-    ret DECIMAL(10, 2)
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
-
-// Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'discount'
-Table charges_discount {
-    id BIGINT [pk, increment]
-    charge_id BIGINT [ref: > charges.id]
-    discount DECIMAL(10, 2)
-    discount_description TEXT
-    claim_number VARCHAR(255)
-    attachment VARCHAR(255)
-    claim_status ENUM('recovered', 'rejected', 'under revision')
-    recovered_amount DECIMAL(10, 2) // Solo si claim_status es 'recovered'
-    notes TEXT
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
-
-// Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'other expenses'
-Table charges_other_expenses {
-    id BIGINT [pk, increment]
-    charge_id BIGINT [ref: > charges.id]
-    amount DECIMAL(10, 2)
-    payment_description TEXT
+    carrier_id BIGINT [ref: > carriers.id]              // Relación con transportista
+    charge_type_id BIGINT [ref: > charge_types.id]       // Relación con el tipo de cargo
+    description TEXT                                     // Descripción general del cargo
+    cost DECIMAL(10, 2)                                  // Costo del cargo
+    currency ENUM('USD', 'MXN')                          // Moneda
+    iva DECIMAL(10, 2)                                   // IVA aplicado
+    ret DECIMAL(10, 2)                                   // Retención aplicada
+    discount DECIMAL(10, 2)                              // Descuento (solo si aplica)
+    discount_description TEXT                            // Descripción del descuento
+    claim_number VARCHAR(255)                            // Número de reclamo (si aplica)
+    claim_status ENUM('recovered', 'rejected', 'under revision')  // Estado del reclamo
+    recovered_amount DECIMAL(10, 2)                      // Monto recuperado (si el reclamo es recuperado)
+    broker_name VARCHAR(255)                             // Nombre del broker (si aplica a Bonded)
+    bond_number VARCHAR(255)                             // Número de bond (si aplica a Bonded)
+    additional_info TEXT                                 // Información adicional (por ejemplo, para "Other Expenses")
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
@@ -485,7 +467,6 @@ Table supplier_reviews {
 // Tabla de usuarios
 Table users {
   id BIGINT [pk, increment]
-  type ENUM('employees', 'customer')
   name VARCHAR(255)
   last_name VARCHAR(255)
   email VARCHAR(255) [unique]
@@ -608,4 +589,3 @@ Table work_schedule {
     time_in TIME
     time_out TIME
 }
-
