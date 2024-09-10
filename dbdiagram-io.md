@@ -567,7 +567,7 @@ Table addresses {
 
 Table bank_details {
     id BIGINT [pk, increment]
-    employeese_id BIGINT [ref: > employees.id]
+    employee_id BIGINT [ref: > employees.id]
     bank_name varchar
     account_number varchar
     card_number varchar
@@ -576,7 +576,7 @@ Table bank_details {
 
 Table devices {
     id BIGINT [pk, increment]
-    employeese_id BIGINT [ref: > employees.id]
+    employee_id BIGINT [ref: > employees.id]
     type varchar  // 'computer' o 'cellphone'
     brand varchar
     model varchar
@@ -587,7 +587,7 @@ Table devices {
 
 Table emergency_contacts {
     id BIGINT [pk, increment]
-    employeese_id BIGINT [ref: > employees.id]
+    employee_id BIGINT [ref: > employees.id]
     name varchar
     relationship varchar
     phone varchar
@@ -595,7 +595,7 @@ Table emergency_contacts {
 
 Table work_schedule {
     id BIGINT [pk, increment]
-    employeese_id BIGINT [ref: > employees.id]
+    employee_id BIGINT [ref: > employees.id]
     day_of_week varchar  // 'monday', 'tuesday', etc.
     time_in TIME
     time_out TIME
