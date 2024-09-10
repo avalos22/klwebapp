@@ -23,6 +23,8 @@ TABLE services { // tabla general de servicios
   id_service_detail BIGINT [ref: > service_details.id] // nombre del servicio FTL LTL ETC.
   expedited BOOLEAN
   hazmat BOOLEAN
+  team_driver BOOLEAN
+  round_trip BOOLEAN
   un_number VARCHAR(20)
   urgency_ltl_id BIGINT [ref: > urgency_ltl.id]
   modality_id BIGINT [ref: > modality.id]
@@ -104,12 +106,24 @@ Table documents {
     updated_at TIMESTAMP
 }
 
+// Tabla universal de cargos para las carreras
+Table charges {
+    id BIGINT [pk, increment]
+    carriers BIGINT [ref: > carriers.id] 
+    charge_type_id BIGINT [ref: > charge_types.id] 
+    description TEXT
+    cost DECIMAL(10, 2)
+    currency ENUM('USD', 'MXN')
+    iva DECIMAL(10, 2)
+    ret DECIMAL(10, 2)
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
 
 // Tabla para almacenar los campos adicionales específicos para el tipo de accesorial 'discount'
 Table charges_discount {
     id BIGINT [pk, increment]
     charge_id BIGINT [ref: > charges.id]
-    supplier VARCHAR(255) // vamos a checar si se debe enlazar con suppliers
     discount DECIMAL(10, 2)
     discount_description TEXT
     claim_number VARCHAR(255)
@@ -125,9 +139,16 @@ Table charges_discount {
 Table charges_other_expenses {
     id BIGINT [pk, increment]
     charge_id BIGINT [ref: > charges.id]
-    supplier VARCHAR(255) // vamos a checar si se debe enlazar con suppliers
     amount DECIMAL(10, 2)
     payment_description TEXT
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+Table charge_types {
+    id BIGINT [pk, increment]
+    name VARCHAR(20) // Detention at Shipper , Detention at Consignee, Detention at Broker, Layover at Shipper, Layover at Broker, Layover at Customs, Layover at Consignee, Over Weight, Over Dimensions, Returning Back to the Shipper, TONU, Red Light at Customs, Pickup Address Change, Delivery Adress Change, Other
+    description VARCHAR(50)
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
@@ -168,21 +189,9 @@ Table stop_offs {
     updated_at TIMESTAMP
 }
 
-// Tabla universal de cargos para las carreras
-Table charges {
-    id BIGINT [pk, increment]
-    carriers BIGINT [ref: > carriers.id] 
-    charge_type_id BIGINT [ref: > charge_types.id] 
-    description TEXT
-    cost DECIMAL(10, 2)
-    currency ENUM('USD', 'MXN')
-    iva DECIMAL(10, 2)
-    ret DECIMAL(10, 2)
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
 
-//  
+
+// tabla para ver los costos de freight rate
 Table cost_details {
     id BIGINT [pk, increment]
     freight_rate DECIMAL(10, 2)
@@ -360,13 +369,7 @@ Table freight_classes {
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
-Table charge_types {
-    id BIGINT [pk, increment]
-    name VARCHAR(20) // Detention at Shipper , Detention at Consignee, Detention at Broker, Layover at Shipper, Layover at Broker, Layover at Customs, Layover at Consignee, Over Weight, Over Dimensions, Returning Back to the Shipper, TONU, Red Light at Customs, Pickup Address Change, Delivery Adress Change, Other
-    description VARCHAR(50)
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
-}
+
 Table uoms {
     id BIGINT [pk, increment]
     name VARCHAR(20) // kg, lbs, in, ft
@@ -482,7 +485,7 @@ Table supplier_reviews {
 // Tabla de usuarios
 Table users {
   id BIGINT [pk, increment]
-  type ENUM('employe', 'customer')
+  type ENUM('employees', 'customer')
   name VARCHAR(255)
   last_name VARCHAR(255)
   email VARCHAR(255) [unique]
@@ -537,11 +540,22 @@ Table model_has_permissions {
   model_id varchar(255)
 }
 
-// Tabla Empleado
-Table employe {
+Table employees {
     id BIGINT [pk, increment]
-    user_id BIGINT [ref: > users.id]
-    date_of_hire DATE
+    user_id BIGINT [ref: > users.id]    // Relación con usuarios
+    date_of_hire DATE                   // Fecha de contratación
+    address_id BIGINT [ref: > addresses.id]  // Relación con tabla de direcciones
+    NSS varchar                         // Número de Seguridad Social
+    tax_status_certificate varchar      // Certificado de estado fiscal
+    id_ine varchar                      // INE (Identificación oficial)
+    social_security_number varchar      // Número de seguro social
+    proof_of_address varchar            // Comprobante de domicilio
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+Table addresses {
+    id BIGINT [pk, increment]
     street_address varchar
     building_number number
     neighborhood varchar
@@ -549,43 +563,40 @@ Table employe {
     state varchar
     postal_code varchar
     country varchar
-    NSS varchar
-    tax_status_certificate varchar
-    id_ine varchar
-    social_security_number varchar
-    proof_of_address varchar
-    emergency_contact_name varchar
-    emergency_contact_relationtship varchar
-    emergency_contact_phone varchar
+}
+
+Table bank_details {
+    id BIGINT [pk, increment]
+    employeese_id BIGINT [ref: > employees.id]
     bank_name varchar
-    account_number number
-    card_number number
-    clabe number
-    computer_brand varchar
-    computer_model varchar
-    computer_serial_number varchar
-    computer_color varchar
-    computer_charger_cable_recived varchar
-    cellphone_brand varchar
-    cellphone_model varchar
-    cellphone_model_number varchar
-    cellphone_serial_number varchar
-    cellphone_color varchar
-    cellphone_charger_cable_recived varchar
-    monday_in TIME
-    monday_out TIME
-    tuesday_in TIME
-    tuesday_out TIME
-    wednesday_in TIME
-    wednesday_out TIME
-    thursday_in TIME
-    thursday_out TIME
-    friday_in TIME
-    friday_out TIME
-    saturday_in TIME
-    saturday_out TIME
-    sunday_in TIME
-    sunday_out TIME
-    created_at TIMESTAMP
-    updated_at TIMESTAMP
+    account_number varchar
+    card_number varchar
+    clabe varchar
+}
+
+Table devices {
+    id BIGINT [pk, increment]
+    employeese_id BIGINT [ref: > employees.id]
+    type varchar  // 'computer' o 'cellphone'
+    brand varchar
+    model varchar
+    serial_number varchar
+    color varchar
+    charger_cable_recived BOOLEAN
+}
+
+Table emergency_contacts {
+    id BIGINT [pk, increment]
+    employeese_id BIGINT [ref: > employees.id]
+    name varchar
+    relationship varchar
+    phone varchar
+}
+
+Table work_schedule {
+    id BIGINT [pk, increment]
+    employeese_id BIGINT [ref: > employees.id]
+    day_of_week varchar  // 'monday', 'tuesday', etc.
+    time_in TIME
+    time_out TIME
 }
