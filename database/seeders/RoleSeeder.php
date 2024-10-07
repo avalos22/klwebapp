@@ -16,12 +16,31 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $role1 = Role::create(['name' => 'admin']);
-        $role2 = Role::create(['name' => 'coordinator']);
+        // Crear roles
+        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleCoordinator = Role::create(['name' => 'coordinator']);
 
-        Permission::create(['name' => 'dashboard'])->syncRoles([$role1, $role2]);
-        Permission::create(['name' => 'users.index'])->assignRole($role1);
-        Permission::create(['name' => 'users.edit'])->assignRole($role1);
-        Permission::create(['name' => 'users.destroy'])->assignRole($role1);
+        // Permisos comunes a ambos roles
+        $permissionsCommon = [
+            'dashboard'
+        ];
+
+        // Permisos exclusivos de admin
+        $permissionsAdmin = [
+            'users.index', 
+            'users.edit', 
+            'users.destroy'
+        ];
+
+        // Asignar permisos comunes
+        foreach ($permissionsCommon as $permission) {
+            Permission::create(['name' => $permission])->syncRoles([$roleAdmin, $roleCoordinator]);
+        }
+
+        // Asignar permisos específicos de admin
+        foreach ($permissionsAdmin as $permission) {
+            Permission::create(['name' => $permission])->assignRole($roleAdmin);
+        }
     }
+
 }

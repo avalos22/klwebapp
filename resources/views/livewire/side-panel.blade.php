@@ -9,8 +9,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 18.364A8.966 8.966 0 0112 15.5a8.966 8.966 0 016.879 2.864M15 11a4 4 0 10-8 0 4 4 0 008 0z"></path>
                     </svg>
                 </a>
-                <span class="pl-2 pt-1 space-x-2"> Admin User </span>
+                <span class="pl-2 pt-1 space-x-2">
+                    {{ ucfirst(auth()->user()->getRoleNames()->first()) }} User
+                </span>
             </div>
+            
+            
             <button @click="open = !open" class="inline-flex items-center justify-center mt-2 p-2 rounded-md text-red-500 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -19,22 +23,18 @@
         </div>
         <!-- Navigation Links -->
         <nav>
-            <x-side-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                Dashboard
-            </x-side-nav-link>
-            <x-side-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
-                Reports
-            </x-side-nav-link>
-            <x-side-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
-                Users
-            </x-side-nav-link>
-            <x-side-nav-link href="{{ route('business-directory.index') }}" :active="request()->routeIs('business-directory.index')">
-                Directory
-            </x-side-nav-link>
-            <x-side-nav-link href="{{ route('catalog') }}" :active="request()->routeIs('catalog')">
-                Catalog Data
-            </x-side-nav-link>
+            @foreach ($navLinks as $link)
+                @if ((isset($link['permission']) && auth()->user()->can($link['permission'])) || (isset($link['role']) && auth()->user()->hasRole($link['role'])))
+                    <x-side-nav-link href="{{ route($link['route']) }}" :active="request()->routeIs($link['route'])">
+                        {!! $link['icon'] !!} <!-- Renderiza el icono de FontAwesome -->
+                        {{ $link['label'] }}
+                    </x-side-nav-link>
+                @endif
+            @endforeach
         </nav>
+        
+        
+        
     </aside>
     <!-- Toggle button -->
     <div class="fixed top-3 left-0 z-10 flex items-center">

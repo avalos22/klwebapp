@@ -33,8 +33,7 @@ class User extends Authenticatable
         'phone', // Added phone to fillable
         'job_title', // Added job_title to fillable
         'office', // Added office to fillable
-        'birthday', // Added birthday to fillable
-        'date_of_hire', // Added date_of_hire to fillable
+        'profile_photo_path'
     ];
 
     /**
@@ -68,8 +67,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             // 'password' => 'hashed',
-            'birthday' => 'date', // Cast birthday as date
-            'date_of_hire' => 'date', // Cast date_of_hire as date
         ];
     }
 

@@ -48,16 +48,6 @@
                         <x-label for="office" :value="__('Office')" />
                         <x-input id="office" class="block mt-1 w-full" type="text" name="office" value="{{ $user->office }}" required />
                     </div>
-    
-                    <div class="mt-4 md:col-span-3">
-                        <x-label for="birthday" :value="__('Birthday')" />
-                        <x-input id="birthday" class="block mt-1 w-full" type="date" name="birthday" value="{{ $user->birthday->format('Y-m-d') }}" required />
-                    </div>
-                    
-                    <div class="mt-4 md:col-span-3">
-                        <x-label for="date_of_hire" :value="__('Date of Hire')" />
-                        <x-input id="date_of_hire" class="block mt-1 w-full" type="date" name="date_of_hire" value="{{ $user->date_of_hire->format('Y-m-d') }}" required />
-                    </div>
                     
                     <div class="mt-4 md:col-span-3">
                         <x-label for="role" :value="__('Role')" />

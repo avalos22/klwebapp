@@ -41,14 +41,18 @@ Route::middleware([
     Route::resource('ftl', FTLController::class);
 
     // Grupo de rutas para Administración
-    // Route::get('/users', function () {return view('users.index');})->name('users');
-    // Grupo de rutas para Administración de Usuarios
-    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    // Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    // Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    // Grupo de rutas para Administración de Usuarios (solo accesible por admin)
+    Route::middleware(['auth', 'can:users.index'])->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    });
+
 
     Route::resource('business-directory', BusinessDirectoryController::class);
-    Route::resource('users', UserController::class);
+    // Route::resource('users', UserController::class);
     // Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
 
 
