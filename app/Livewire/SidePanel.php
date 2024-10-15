@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\View;
 
 class SidePanel extends Component
 {
-    // public $closed = false;
-    public $open = false;
+    public $closed = false;
+    // public $open = false;
 
     public function toggleMenu()
     {

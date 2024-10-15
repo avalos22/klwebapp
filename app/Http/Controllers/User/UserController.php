@@ -9,6 +9,8 @@ use App\Models\User; // agrega el modelo User
 
 use Spatie\Permission\Models\Role;
 
+use Illuminate\Support\Facades\Log;
+
 class UserController extends Controller
 {
     /**
@@ -113,7 +115,25 @@ class UserController extends Controller
             'job_title' => 'required|string|max:255',
             'office' => 'required|string|max:255',
             'role' => 'required|exists:roles,id', // Validar que el rol exista
+            'password' => 'nullable|string|min:8|confirmed', // Nueva validación para la contraseña
+            'picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Validación para la imagen
         ]);
+        
+        // Actualizar foto de perfil si se sube una nueva
+        if ($request->hasFile('picture')) {
+            $picturePath = $request->file('picture')->store('profile-photos', 'public');
+            // Log::info('Profile photo path:', ['path' => $picturePath]); // Registra la ruta para verificar
+            // dd($picturePath);
+            $validatedData['profile_photo_path'] = $picturePath;
+            
+        }
+
+        // Actualizar contraseña si se proporciona una nueva
+        if ($request->filled('password')) {
+            $validatedData['password'] = bcrypt($request->input('password'));
+        } else {
+            unset($validatedData['password']); // Elimina la clave si no se está actualizando la contraseña
+        }
     
         // Encontrar el rol por su ID y asegurarse de que exista
         $role = Role::find($validatedData['role']);
@@ -129,6 +149,12 @@ class UserController extends Controller
     
         // Actualizar datos del usuario
         $user->update($validatedData);
+
+        // Guarda manualmente el campo de la imagen si no se guarda con el `update()`
+        if (isset($validatedData['profile_photo_path'])) {
+            $user->profile_photo_path = $validatedData['profile_photo_path'];
+            $user->save();
+        }
     
         // Desasociar cualquier rol existente
         $user->roles()->detach();
@@ -137,11 +163,11 @@ class UserController extends Controller
         $user->assignRole($role->name);
 
         // Registrar la actividad
-        activity()
-        ->causedBy(auth()->user()) // Quién causó la acción
-        ->performedOn($user) // En qué entidad se realizó la acción
-        ->withProperties(['attributes' => $validatedData]) // Opcional: Detalles adicionales
-        ->log('Usuario actualizado'); // Mensaje personalizado
+        // activity()
+        // ->causedBy(auth()->user()) // Quién causó la acción
+        // ->performedOn($user) // En qué entidad se realizó la acción
+        // ->withProperties(['attributes' => $validatedData]) // Opcional: Detalles adicionales
+        // ->log('Usuario actualizado'); // Mensaje personalizado
     
         return redirect()->route('users.edit', $user)->with('info', 'Usuario actualizado con éxito.');
     }

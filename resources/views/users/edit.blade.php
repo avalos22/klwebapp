@@ -15,7 +15,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
-                <form method="POST" action="{{ route('users.update', $user->id) }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 p-4">
+                <form method="POST" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 p-4">
                     @csrf
                     @method('PUT')
     
@@ -57,6 +57,59 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <!-- Campo para la contraseña -->
+                    <div class="mt-4 md:col-span-6">
+                        <x-label for="password" :value="__('New Password')" />
+                        <x-input id="password" class="block mt-1 w-full" type="password" name="password" />
+                        <small class="text-gray-500">{{ __('Leave empty if you don\'t want to change the password.') }}</small>
+                    </div>
+
+                    <div class="mt-4 md:col-span-6">
+                        <x-label for="password_confirmation" :value="__('Confirm Password')" />
+                        <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
+                    </div>
+
+                    <!-- Campo para la foto de perfil -->
+                    <div id="user-inputs-02" class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6">
+                        <div class="flex flex-wrap">
+                            <div x-data="{ photoName: null, photoPreview: '{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : '' }}' }">
+                                <input type="file" id="photo" class="hidden" name="picture" x-ref="photo"
+                                    x-on:change="
+                                        photoName = $refs.photo.files[0].name;
+                                        const reader = new FileReader();
+                                        reader.onload = (e) => {
+                                            photoPreview = e.target.result;
+                                        };
+                                        reader.readAsDataURL($refs.photo.files[0]);
+                                    " />
+                                <x-label for="photo" value="{{ __('Add Picture') }}" />
+                    
+                                <!-- Current Profile Photo -->
+                                <div class="mt-2" x-show="!photoPreview">
+                                    @if($user->profile_photo_path)
+                                        <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Photo" class="bg-gray-600 h-56 w-56 object-cover rounded-full">
+                                    @else
+                                        <div class="w-56 h-56 bg-gray-600 flex items-center justify-center text-4xl text-white font-s">
+                                            N/A
+                                        </div>
+                                    @endif
+                                </div>
+                    
+                                <!-- New Profile Photo Preview -->
+                                <div class="mt-2" x-show="photoPreview" style="display: none;">
+                                    <span class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+                                        x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                                    </span>
+                                </div>
+                                <x-secondary-button class="mt-2" type="button"
+                                    x-on:click.prevent="$refs.photo.click()">
+                                    {{ __('Select A New Photo') }}
+                                </x-secondary-button>
+                            </div>
+                        </div>
+                    </div>
+                    
     
                     <div class="md:col-span-12 mt-2 ml-auto">
                         <x-button class="w-full flex items-center justify-center">

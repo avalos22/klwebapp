@@ -23,13 +23,13 @@ return [
         [
             'label' => 'Directory',
             'route' => 'business-directory.index',
-            'permission' => 'directory.view',
+            'role' => 'admin',
             'icon' => '<i class="fas fa-folder"></i>',  // Icono de FontAwesome
         ],
         [
             'label' => 'Catalog Data',
             'route' => 'catalog',
-            'permission' => 'catalog',
+            'role' => 'admin',
             'icon' => '<i class="fas fa-archive"></i>',  // Icono de FontAwesome
         ],
     ]

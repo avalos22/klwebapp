@@ -51,9 +51,9 @@ Route::middleware([
     });
 
 
-    Route::resource('business-directory', BusinessDirectoryController::class);
+    // Route::resource('business-directory', BusinessDirectoryController::class);
     // Route::resource('users', UserController::class);
-    // Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
+    Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
 
 
 });

@@ -16,9 +16,9 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear roles
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleCoordinator = Role::create(['name' => 'coordinator']);
+        // Crear o recuperar roles
+        $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
+        $roleCoordinator = Role::firstOrCreate(['name' => 'coordinator']);
 
         // Permisos comunes a ambos roles
         $permissionsCommon = [
@@ -29,18 +29,22 @@ class RoleSeeder extends Seeder
         $permissionsAdmin = [
             'users.index', 
             'users.edit', 
-            'users.destroy'
+            'users.destroy',
+            'business-directory.index'
         ];
 
         // Asignar permisos comunes
         foreach ($permissionsCommon as $permission) {
-            Permission::create(['name' => $permission])->syncRoles([$roleAdmin, $roleCoordinator]);
+            $perm = Permission::firstOrCreate(['name' => $permission]);
+            $perm->syncRoles([$roleAdmin, $roleCoordinator]);
         }
 
         // Asignar permisos específicos de admin
         foreach ($permissionsAdmin as $permission) {
-            Permission::create(['name' => $permission])->assignRole($roleAdmin);
+            $perm = Permission::firstOrCreate(['name' => $permission]);
+            $perm->assignRole($roleAdmin);
         }
     }
+
 
 }
