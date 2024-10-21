@@ -5,7 +5,7 @@ return [
         [
             'label' => 'Dashboard',
             'route' => 'dashboard',
-            'permission' => 'dashboard',
+            'role' => 'admin',
             'icon' => '<i class="fas fa-home"></i>',  // Icono de FontAwesome
         ],
         [

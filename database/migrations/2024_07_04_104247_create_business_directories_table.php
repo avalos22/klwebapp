@@ -31,6 +31,7 @@ return new class extends Migration
             $table->integer('credit_days')->nullable(); // Días de crédito
             $table->date('credit_expiration_date')->nullable(); // Fecha de expiración del crédito
             $table->integer('free_loading_unloading_hours')->nullable(); // Horas de carga y descarga gratuita
+            $table->foreign('factory_company_id')->references('id')->on('factory_companies');
             $table->text('notes')->nullable(); // Notas adicionales
             $table->text('add_document')->nullable(); // Campo para agregar URL de documentos
             $table->date('document_expiration_date')->nullable(); // Fecha de expiración del documento

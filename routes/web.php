@@ -32,10 +32,10 @@ Route::middleware([
         return view('catalog.index');
     })->name('catalog');
     
-    // Ruta para directory
-    Route::get('/directory', function () {
-        return view('dashboard');
-    })->name('directory');
+    // // Ruta para directory
+    // Route::get('/directory', function () {
+    //     return view('dashboard');
+    // })->name('directory');
 
     // Ruta de los servicios
     Route::resource('ftl', FTLController::class);
