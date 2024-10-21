@@ -7,11 +7,11 @@ use App\Http\Controllers\FTLController;
 
 // Ruta para la página de inicio
 // Route::get('/', function () { //maneja las solicitudes a la raíz de tu aplicación. Aquí se define que, al acceder al dominio principal, se mostrará la vista de login.
-//     // return view('auth/login');
-//     return view('welcome');
+    // return view('auth/login');
+//     return view('register');
 // })->name('home');//nombre de la ruta
 
-// Grupo de rutas protegidas por autenticación
+////Grupo de rutas protegidas por autenticación
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
