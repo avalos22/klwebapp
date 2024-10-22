@@ -53,7 +53,9 @@
                         <x-label for="role" :value="__('Role')" />
                         <select id="role" name="role" class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400" required>
                             @foreach($roles as $role)
-                                <option value="{{ $role->id }}" {{ $user->role == $role->name ? 'selected' : '' }}>{{ $role->name }}</option>
+                                <option value="{{ $role->id }}" {{ $user->roles->contains($role) ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>

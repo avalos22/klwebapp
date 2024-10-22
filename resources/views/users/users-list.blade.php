@@ -27,7 +27,14 @@
                     <td class="px-4 py-2">{{ $user->phone }}</td>
                     <td class="px-4 py-2">{{ $user->email }}</td>
                     <td class="px-4 py-2">{{ $user->job_title }}</td>
-                    <td class="px-4 py-2">{{ $user->role }}</td>
+                    <td class="px-4 py-2">
+                        @if($user->roles->isNotEmpty())
+                            {{ $user->getRoleNames()->implode(', ') }} {{-- Display multiple roles if the user has more than one --}}
+                        @else
+                            <span>No Role Assigned</span>
+                        @endif
+                    </td>
+                    
                     <td class="px-4 py-2">
                         @if($user->profile_photo_path)
                             <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Pic" class="h-10 w-10 rounded-full">

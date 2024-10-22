@@ -28,6 +28,6 @@ class UserSeeder extends Seeder
             'office' => 'saltillo',
         ])->assignRole('admin');
 
-        User::factory(18)->create();
+        User::factory(8)->create();
     }
 }
