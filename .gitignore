@@ -43,4 +43,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/vite.config.js
 >>>>>>> 36556ce (Set up a fresh Laravel app)
