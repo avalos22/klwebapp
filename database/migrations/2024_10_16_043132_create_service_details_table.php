@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('service_details', function (Blueprint $table) {
             $table->id();  // Identificador único
-            $table->enum('name', [
-                'FTL', 'LTL', 'hand carrier', 'charter', 'Air Freight', 
-                'Container Drayage', 'warehouse', 'Trailer Rental', 
-                'us customs broker', 'Transfer'
-            ]);  // Tipo de servicio
+            $table->string('name');
             $table->string('description')->nullable();  // Descripción del servicio
             $table->timestamps();  // Campos created_at y updated_at
         });
