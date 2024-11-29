@@ -36,4 +36,9 @@ class BusinessDirectory extends Model
         'picture', 
         'tarifario'
     ];
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'directory_entry_id');
+    }
 }

@@ -31,8 +31,8 @@
             @foreach ($entries as $entry)
                 <div class="border border-gray-300 p-4 m-4 rounded-md w-full md:w-1/2 lg:w-1/2 xl:w-1/6">
                     <div class="">
-                        @if ($entry->logo)
-                            <img src="{{ $entry->logo }}" alt="{{ $entry->company }}" class="w-16 h-16 rounded-full">
+                        @if ($entry->picture)
+                            <img src="{{ $entry->picture }}" alt="{{ $entry->company }}" class="w-16 h-16 rounded-full">
                         @else
                             <div
                                 class="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center text-4xl text-white font-s">
@@ -47,9 +47,10 @@
                     </div>
                     <p class="mb-4"><strong>Mobile:</strong> {{ $entry->phone }}</p>
                     <div>
-                        <x-button>Edit</x-button>
-                        <x-button>View</x-button>
-                        <x-button>Email</x-button>
+                        <x-button>
+                            <a href="{{ route('business-directory.contacts.contact-details', $entry->id) }}">Details</a>
+                        </x-button>
+                        
                     </div>
                 </div>
             @endforeach

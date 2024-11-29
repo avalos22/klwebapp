@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\BusinessDirectory;
 use App\Models\FactoryCompany;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 
 class BusinessDirectoryController extends Controller
@@ -71,5 +72,48 @@ class BusinessDirectoryController extends Controller
 
         // Redirigir con éxito
         return redirect()->route('business-directory.index')->with('success', 'Customer created successfully.');
+    }
+
+    public function showContacts($id)
+    {
+        // Buscar el business directory con sus contactos
+        $directory = BusinessDirectory::with(['contacts'])->findOrFail($id);
+
+        // Cargar los contactos con paginación
+        $contacts = $directory->contacts()->paginate(10);
+
+        return view('business_directory.contacts.index', compact('directory', 'contacts'));
+    }
+
+
+    public function ContactDetails($id)
+    {
+        // Obtener el registro de business_directory
+        $directory = BusinessDirectory::findOrFail($id);
+
+        // Mostrar la vista con el formulario
+        return view('business_directory.contacts.contact-details', compact('directory'));
+    }
+
+    public function storeContact(Request $request, $id)
+    {
+        // Validar los datos del formulario
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'office_phone' => 'nullable|string|max:20',
+            'cellphone' => 'nullable|string|max:20',
+            'email' => 'required|email|max:255',
+            'working_hours' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Crear el contacto vinculado al registro de business_directory
+        $contact = new Contact($validated);
+        $contact->directory_entry_id = $id;
+        $contact->save();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('business-directory.index')->with('success', 'Contact added successfully.');
     }
 }

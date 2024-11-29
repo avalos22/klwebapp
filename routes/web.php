@@ -23,6 +23,10 @@ Route::middleware([
         return view('/dashboard');
     })->name('dashboard');
     
+    Route::get('/dashboard', function () {
+        return view('/dashboard');
+    })->name('dashboard.page');
+    
     
     // Ruta para reports
     Route::get('/reports', function () {
@@ -62,5 +66,14 @@ Route::middleware([
     Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
     Route::get('/business-directory/customer/create', [BusinessDirectoryController::class, 'createCustomer'])->name('business-directory.customer.create');
     Route::post('/business-directory/customer/store', [BusinessDirectoryController::class, 'storeCustomer'])->name('business-directory.customer.store');
+    // Ruta para mostrar el formulario de agregar contactos
+    Route::get('/business-directory/{id}/contacts/details', [BusinessDirectoryController::class, 'ContactDetails'])->name('business-directory.contacts.contact-details');
+
+    Route::get('business-directory/{id}/contacts', [BusinessDirectoryController::class, 'showContacts'])->name('business-directory.contacts.index');
+
+
+    // Ruta para guardar el contacto
+    Route::post('/business-directory/{id}/contacts/store', [BusinessDirectoryController::class, 'storeContact'])->name('business-directory.contacts.store');
+
     
 });
