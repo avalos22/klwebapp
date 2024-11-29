@@ -22,15 +22,16 @@ class RoleSeeder extends Seeder
 
         // Permisos comunes a ambos roles
         $permissionsCommon = [
-            'dashboard'
+            'dashboard',
         ];
 
         // Permisos exclusivos de admin
         $permissionsAdmin = [
+            'catalog.index',
             'users.index', 
             'users.edit', 
             'users.destroy',
-            'business-directory.index'
+            'business-directory.index',
         ];
 
         // Asignar permisos comunes

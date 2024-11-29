@@ -29,6 +29,7 @@ class BusinessDirectory extends Model
         'credit_days', 
         'credit_expiration_date', 
         'free_loading_unloading_hours', 
+        'factory_company_id',
         'notes', 
         'add_document', 
         'document_expiration_date', 

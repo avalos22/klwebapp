@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             HandlingTypeSeeder::class,
             MaterialTypesSeeder::class,
             FreightClassSeeder::class,
-            ChargeTypeSeeder::class, 
+            ChargeTypeSeeder::class,
+            FactoryCompaniesSeeder::class, 
         ]);
         
         // User::factory()->create([

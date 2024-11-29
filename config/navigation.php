@@ -28,7 +28,7 @@ return [
         ],
         [
             'label' => 'Catalog Data',
-            'route' => 'catalog',
+            'route' => 'catalog.index',
             'role' => 'admin',
             'icon' => '<i class="fas fa-archive"></i>',  // Icono de FontAwesome
         ],

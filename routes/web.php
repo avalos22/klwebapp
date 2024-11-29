@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\BusinessDirectoryController;
 use App\Http\Controllers\FTLController;
 
@@ -19,8 +20,9 @@ Route::middleware([
 ])->group(function () {
     // Ruta para el dashboard
     Route::get('/', function () {
-        return view('dashboard');
+        return view('/dashboard');
     })->name('dashboard');
+    
     
     // Ruta para reports
     Route::get('/reports', function () {
@@ -28,9 +30,9 @@ Route::middleware([
     })->name('reports');
 
     // Ruta para catalogo
-    Route::get('/catalog', function () {
-        return view('catalog.index');
-    })->name('catalog');
+    // Route::get('/catalog', function () {
+    //     return view('catalog.index');
+    // })->name('catalog');
     
     // // Ruta para directory
     // Route::get('/directory', function () {
@@ -50,10 +52,15 @@ Route::middleware([
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
     });
 
+    Route::middleware(['auth', 'can:catalog.index'])->group(function () {
+        Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+    });
+
 
     // Route::resource('business-directory', BusinessDirectoryController::class);
     // Route::resource('users', UserController::class);
     Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
-
-
+    Route::get('/business-directory/customer/create', [BusinessDirectoryController::class, 'createCustomer'])->name('business-directory.customer.create');
+    Route::post('/business-directory/customer/store', [BusinessDirectoryController::class, 'storeCustomer'])->name('business-directory.customer.store');
+    
 });
