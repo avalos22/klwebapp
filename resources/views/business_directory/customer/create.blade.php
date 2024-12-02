@@ -10,7 +10,7 @@
             @csrf
             <div class="flex flex-wrap">
                 <!-- Left Column -->
-                <div class="w-full lg:w-10/12 flex flex-wrap bg-black">
+                <div class="w-full lg:w-10/12 flex flex-wrap">
                     <!-- Row 1 -->
                     <div class="w-full md:w-1/2 lg:w-1/2 xl:w-3/12 p-1">
                         <input type="hidden" name="type" value="customer">
@@ -63,7 +63,7 @@
                         @enderror
                     </div>
                     <!-- Row 3 -->
-                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-1/6 p-1">
+                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-4/12 p-1">
                         <x-label for="neighborhood" value="{{ __('Neighborhood') }}" />
                         <x-input id="neighborhood" placeholder="Placeholder" type="text" name="neighborhood"
                             class="mt-1 block w-full" />
@@ -71,7 +71,7 @@
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-1/6 p-1">
+                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-3/12 p-1">
                         <x-label for="city" value="{{ __('City') }}" />
                         <x-input id="city" placeholder="Placeholder" type="text" name="city"
                             class="mt-1 block w-full" />
@@ -79,7 +79,7 @@
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-1/3 p-1">
+                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-2/12 p-1">
                         <x-label for="state" value="{{ __('State') }}" />
                         <x-input id="state" placeholder="Placeholder" type="text" name="state"
                             class="mt-1 block w-full" />
@@ -96,7 +96,7 @@
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-32 p-1">
+                    <div class="w-full md:w-1/2 lg:w-1/2 xl:w-2/12 p-1">
                         <x-label for="country" value="{{ __('Country') }}" />
                         <x-input id="country" placeholder="Placeholder" type="text" name="country"
                             class="mt-1 block w-full" />
