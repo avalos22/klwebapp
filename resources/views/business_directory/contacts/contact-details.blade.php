@@ -44,7 +44,7 @@
         </div>
         <div class="ms-12 me-12 mt-8">
             <x-button>
-                <a href="{{ route('business-directory.customer.edit', $directory->id) }}">Edit Customer</a>
+                <a href="{{ route('business-directory.edit', $directory->id) }}">Edit {{ $directory->type }}</a>
             </x-button>
             
         </div>

@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="ms-12 me-12">
-        <form action="{{ route('business-directory.customer.update', $directory->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('business-directory.update', $directory->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT') <!-- Método PUT para la actualización -->
         
@@ -15,7 +15,7 @@
                 <div class="w-full lg:w-10/12 flex flex-wrap">
                     <!-- Row 1 -->
                     <div class="w-full md:w-1/2 lg:w-1/2 xl:w-3/12 p-1">
-                        <input type="hidden" name="type" value="customer">
+                        <input type="hidden" name="type" value="{{ old('nickname', $directory->type) }}">
                         <x-label for="company" value="{{ __('Company') }}" />
                         <x-input id="company" placeholder="Customer Company" type="text" name="company" class="mt-1 block w-full" required value="{{ old('company', $directory->company) }}" />
                         @error('company') <span class="text-red-500">{{ $message }}</span> @enderror
@@ -168,10 +168,21 @@
                             @else
                                 <p class="text-gray-500">No document uploaded</p>
                             @endif
+                
+                            <!-- Botón para subir un documento -->
                             <x-button type="button" class="bg-red-500 text-white px-4" x-on:click.prevent="$refs.documentInput.click()">
                                 Upload a Document
                             </x-button>
                         </div>
+                
+                        <!-- Input de archivo escondido -->
+                        <input 
+                            type="file" 
+                            id="add_document" 
+                            name="add_document" 
+                            x-ref="documentInput" 
+                            class="hidden" 
+                        />
                     </div>
                     @error('add_document') 
                         <span class="text-red-500">{{ $message }}</span> 
@@ -186,7 +197,7 @@
                             <div class="flex justify-between items-center p-4 border-b">
                                 <h3 class="text-lg font-semibold">Document Preview</h3>
                                 <!-- Botón para cerrar el modal -->
-                                <button x-on:click.prevent="showModal = false" class="text-gray-600 hover:text-gray-900">
+                                <button type="button" x-on:click.prevent="showModal = false" class="text-gray-600 hover:text-gray-900">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -200,9 +211,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                
+                </div>                                
             </div>
         
             <!-- Buttons -->

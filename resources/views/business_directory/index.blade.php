@@ -15,11 +15,20 @@
                 <option value="supplier">Supplier</option>
             </select>
             <x-input type="text" placeholder="Who are you looking for?" wire:model="searchTerm" />
-            <a href="{{ route('business-directory.customer.create') }}" class="inline-block">
+            <a href="{{ route('business-directory.create') }}" class="inline-block">
                 <x-button>Add Customer</x-button>
             </a>
-            <x-button>Add New Station</x-button>
-            <x-button>Add Supplier</x-button>
+            <a href="{{ route('business-directory.create', ['type' => 'customer']) }}" class="inline-block">
+                <x-button>Add Customer</x-button>
+            </a>
+            
+            <a href="{{ route('business-directory.create', ['type' => 'station']) }}" class="inline-block">
+                <x-button>Add New Station</x-button>
+            </a>
+            
+            <a href="{{ route('business-directory.create', ['type' => 'supplier']) }}" class="inline-block">
+                <x-button>Add Supplier</x-button>
+            </a>
             @if (session('success'))
                 <div class="bg-green-500 text-white px-4 py-2 rounded-md mb-4">
                     {{ session('success') }}

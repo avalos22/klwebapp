@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('New Customer') }}
+            <h2 class="text-xl font-semibold mb-4">Add New {{ ucfirst($type) }}</h2>
         </h2>
     </x-slot>
     <div class="ms-12 me-12">
-        <form action="{{ route('business-directory.customer.store') }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('business-directory.store') }}" method="POST" enctype="multipart/form-data"
             class="space-y-6">
             @csrf
             <div class="flex flex-wrap">
@@ -13,7 +13,7 @@
                 <div class="w-full lg:w-10/12 flex flex-wrap">
                     <!-- Row 1 -->
                     <div class="w-full md:w-1/2 lg:w-1/2 xl:w-3/12 p-1">
-                        <input type="hidden" name="type" value="customer">
+                        <input type="hidden" name="type" value="{{ $type }}">
                         <x-label for="company" value="{{ __('Company') }}" />
                         <x-input id="company" placeholder="Customer Company" type="text" name="company"
                             class="mt-1 block w-full" required />
@@ -206,15 +206,15 @@
             </div>
             <!-- Notes Section -->
             <div class="w-full">
-                <div class="flex flex-wrap items-center gap-4">
+                <div class="flex flex-wrap items-center gap-2">
                     <!-- Notes Input -->
-                    <div class="w-full md:w-2/3">
+                    <div class="w-full md:w-5/12">
                         <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
                         <textarea id="notes" name="notes" rows="3"
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
                     </div>
                     <!-- Document Expiration Date Input -->
-                    <div class="w-full md:w-1/3">
+                    <div class="w-full md:w-4/12">
                         <label for="document_expiration_date" class="block text-sm font-medium text-gray-700">Select
                             the document's expiration date</label>
                         <div class="relative mt-1">
@@ -230,18 +230,37 @@
                         </div>
                     </div>
                     <!-- Document Input -->
-                    <div class="w-full md:w-1/3">
+                    <div class="w-full md:w-2/12">
                         <label for="add_document" class="block text-sm font-medium text-gray-700">Document</label>
                         <input type="file" id="add_document" name="add_document"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
                     </div>
                 </div>
             </div>
+
+            <!-- Campo adicional solo para Station -->
+            <div class="w-full">
+                <div class="flex flex-wrap items-center gap-2">
+                    @if ($type === 'station')
+                        <div class="w-full lg:w-1/3 p-2">
+                            <x-label for="tarifario" value="Tarifario" />
+                            <input type="file" id="tarifario" name="tarifario"
+                                class="block w-full border-gray-300 rounded-md">
+                            @error('tarifario')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+
             <!-- Buttons -->
             <div class="mt-6 flex space-x-4">
 
-                <a href="{{ route('business-directory.index') }}" class="px-4 py-2 bg-zinc-950 text-white rounded-md shadow hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 flex items-center">
-                        Cancel
+                <a href="{{ route('business-directory.index') }}"
+                    class="px-4 py-2 bg-zinc-950 text-white rounded-md shadow hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 flex items-center">
+                    Cancel
                 </a>
                 <x-button>Save</x-button>
             </div>
