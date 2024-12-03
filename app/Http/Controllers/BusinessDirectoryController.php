@@ -101,9 +101,10 @@ class BusinessDirectoryController extends Controller
 
         $picturePath = $this->storeDocument($request, 'picture', $directory);
         $documentPath = $this->storeDocument($request, 'add_document', $directory);
+        $tarifarioPath = $this->storeDocument($request, 'tarifario');
 
         // Actualizar entrada existente
-        $directory->update(array_merge($validated, ['picture' => $picturePath, 'add_document' => $documentPath]));
+        $directory->update(array_merge($validated, ['picture' => $picturePath, 'add_document' => $documentPath, 'tarifario' => $tarifarioPath]));
 
         return redirect()->route('business-directory.index')->with('success', 'Directory updated successfully!');
     }

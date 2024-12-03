@@ -213,6 +213,62 @@
                     </div>
                 </div>                                
             </div>
+
+            <div class="w-full pt-1">
+                @if ($directory->type === 'station')
+                    <x-label for="tarifario" value="{{ __('Tarifario') }}" />
+                    <div x-data="{ showTarifarioModal: false, tarifarioName: null }" class="mt-2">
+                        <!-- Mostrar documento actual si existe -->
+                        @if ($directory->tarifario)
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="text-blue-600 hover:underline" x-on:click="showTarifarioModal = true">
+                                    <i class="fas fa-eye"></i> View Tarifario
+                                </button>
+                                <a href="{{ asset('storage/' . $directory->tarifario) }}" target="_blank" class="text-gray-600 hover:underline">
+                                    <i class="fas fa-download"></i> Download Tarifario
+                                </a>
+                            </div>
+                        @else
+                            <p class="text-gray-500">No tarifario uploaded</p>
+                        @endif
+            
+                        <!-- Input para cargar nuevo tarifario -->
+                        <input type="file" id="tarifario" name="tarifario" class="hidden" x-ref="tarifarioInput"
+                            x-on:change="tarifarioName = $refs.tarifarioInput.files[0].name">
+                        <x-button type="button" class="mt-2 bg-red-500 text-white" x-on:click.prevent="$refs.tarifarioInput.click()">
+                            Upload Tarifario
+                        </x-button>
+                        <p class="mt-2 text-sm text-gray-500" x-show="tarifarioName">Selected file: <span x-text="tarifarioName"></span></p>
+            
+                        @error('tarifario') <span class="text-red-500">{{ $message }}</span> @enderror
+            
+                        <!-- Modal para previsualizar el tarifario -->
+                        <div 
+                            x-show="showTarifarioModal" 
+                            x-cloak 
+                            class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+                            <div class="bg-white rounded-lg shadow-lg overflow-hidden w-3/4 h-3/4">
+                                <div class="flex justify-between items-center p-4 border-b">
+                                    <h3 class="text-lg font-semibold">Tarifario Preview</h3>
+                                    <button type="button" x-on:click="showTarifarioModal = false" class="text-gray-600 hover:text-gray-900">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="p-4 h-full">
+                                    @if ($directory->tarifario)
+                                        <!-- Mostrar documento en iframe -->
+                                        <iframe src="{{ asset('storage/' . $directory->tarifario) }}" class="w-full h-full border rounded-md"></iframe>
+                                    @else
+                                        <p class="text-sm text-gray-500">No tarifario available to preview.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            
+            
         
             <!-- Buttons -->
             <div class="mt-6 flex space-x-4">
