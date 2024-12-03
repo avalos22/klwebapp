@@ -66,6 +66,9 @@ Route::middleware([
     Route::get('business-directory', [BusinessDirectoryController::class, 'index'])->name('business-directory.index');
     Route::get('/business-directory/customer/create', [BusinessDirectoryController::class, 'createCustomer'])->name('business-directory.customer.create');
     Route::post('/business-directory/customer/store', [BusinessDirectoryController::class, 'storeCustomer'])->name('business-directory.customer.store');
+    Route::get('business-directory/customer/{id}/edit', [BusinessDirectoryController::class, 'edit'])->name('business-directory.customer.edit');
+    Route::put('business-directory/customer/{id}', [BusinessDirectoryController::class, 'update'])->name('business-directory.customer.update');
+
     // Ruta para mostrar el formulario de agregar contactos
     Route::get('/business-directory/{id}/contacts/details', [BusinessDirectoryController::class, 'ContactDetails'])->name('business-directory.contacts.contact-details');
 
@@ -74,6 +77,6 @@ Route::middleware([
 
     // Ruta para guardar el contacto
     Route::post('/business-directory/{id}/contacts/store', [BusinessDirectoryController::class, 'storeContact'])->name('business-directory.contacts.store');
-
+    
     
 });

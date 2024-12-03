@@ -51,7 +51,7 @@ class BusinessDirectoryController extends Controller
             'add_document' => 'nullable|file|max:2048', // Valida documentos
             'tarifario' => 'nullable|string', // Valida tarifario
         ]);
-        logger('Validated data:', $validated);
+       // logger('Validated data:', $validated);
 
         // Manejo de archivo de imagen
         $picturePath = null;
@@ -73,6 +73,78 @@ class BusinessDirectoryController extends Controller
         // Redirigir con éxito
         return redirect()->route('business-directory.index')->with('success', 'Customer created successfully.');
     }
+
+    public function edit($id)
+    {
+        $directory = BusinessDirectory::findOrFail($id); // Busca el directorio por su ID
+        $factoryCompanies = FactoryCompany::all();
+        return view('business_directory.customer.edit', compact('directory', 'factoryCompanies')); // Retorna la vista de edición
+    }
+
+    public function update(Request $request, $id)
+{
+    $directory = BusinessDirectory::findOrFail($id);
+
+    // Validación
+    $validated = $request->validate([
+        'type' => 'required|in:station,customer,supplier',
+        'company' => 'required|string|max:255',
+        'nickname' => 'nullable|string|max:255',
+        'billing_currency' => 'required|in:USD,MXN',
+        'rfc_tax_id' => 'nullable|string|max:20',
+        'street_address' => 'nullable|string|max:255',
+        'building_number' => 'nullable|string|max:20',
+        'neighborhood' => 'nullable|string|max:255',
+        'city' => 'nullable|string|max:255',
+        'state' => 'nullable|string|max:255',
+        'postal_code' => 'nullable|string|max:10',
+        'country' => 'nullable|string|max:255',
+        'phone' => 'nullable|string|max:20',
+        'website' => 'nullable|url|max:255',
+        'email' => 'nullable|email|max:255',
+        'credit_days' => 'nullable|integer',
+        'credit_expiration_date' => 'nullable|date',
+        'free_loading_unloading_hours' => 'nullable|integer',
+        'factory_company_id' => 'nullable|exists:factory_companies,id',
+        'notes' => 'nullable|string',
+        'document_expiration_date' => 'nullable|date',
+        'picture' => 'nullable|image|max:2048', // Valida imágenes
+        'add_document' => 'nullable|file|max:2048', // Valida documentos
+        'tarifario' => 'nullable|string', // Valida tarifario
+    ]);
+
+    // Manejo de archivo de imagen
+    if ($request->hasFile('picture')) {
+        // Elimina la imagen anterior si existe
+        if ($directory->picture) {
+            \Storage::disk('public')->delete($directory->picture);
+        }
+
+        // Guarda la nueva imagen
+        $picturePath = $request->file('picture')->store('pictures', 'public');
+        $validated['picture'] = $picturePath;
+    }
+
+    // Manejo de archivo de documento
+    if ($request->hasFile('add_document')) {
+        // Elimina el documento anterior si existe
+        if ($directory->add_document) {
+            \Storage::disk('public')->delete($directory->add_document);
+        }
+
+        // Guarda el nuevo documento
+        $documentPath = $request->file('add_document')->store('documents', 'public');
+        $validated['add_document'] = $documentPath;
+    }
+
+    // Actualización de datos
+    $directory->update($validated);
+
+    return redirect()->route('business-directory.index')->with('success', 'Directory updated successfully!');
+}
+
+
+
 
     public function showContacts($id)
     {
