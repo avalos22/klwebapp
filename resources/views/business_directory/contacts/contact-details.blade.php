@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Directory Details') }} - {{ $directory->company }}
+            {{ __('Directory Details') }} - {{ $directory->type }} - {{ $directory->company }}
         </h2>
     </x-slot>
 
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="ms-12 me-12 mt-8">
+        <div class="mt-3">
             <x-button>
                 <a href="{{ route('business-directory.edit', $directory->id) }}">Edit {{ $directory->type }}</a>
             </x-button>

@@ -1,9 +1,9 @@
 <div>
-    <div class="mb-10">
+    <div class="mb-10 mt-10">
         <div class="table-header">
             {{-- Campo de búsqueda --}}
             <x-input placeholder="Search Contact" wire:model="search" wire:keydown="refreshComponent" class="mb-4" />
-            <x-button wire:click="create" class="bg-green-500 hover:bg-green-700 text-white">
+            <x-button wire:click="create" class="bg-green-500 hover:bg-green-700 text-white ml-3">
                 Add New Contact
             </x-button>
 
