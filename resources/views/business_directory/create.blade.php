@@ -254,6 +254,65 @@
                 </div>
             </div>
 
+            <!-- Campo adicional solo para Suppliers -->
+            <div class="w-full">
+                <div class="flex flex-wrap items-center gap-2">
+                    @if ($type === 'supplier')
+                        <div class="w-full lg:w-2/12 p-2">
+                            <x-label for="tarifario" value="Tarifario" />
+                            <input type="file" id="tarifario" name="tarifario"
+                                class="block w-full border-gray-300 rounded-md">
+                            @error('tarifario')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div x-show="type === 'supplier'" class="mt-6">
+                            <h3 class="font-semibold text-lg">Supplier Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- MC Number -->
+                                <div>
+                                    <x-label for="mc_number" value="{{ __('MC Number') }}" />
+                                    <x-input id="mc_number" type="text" name="mc_number" class="block mt-1 w-full" />
+                                </div>
+                                <!-- USDOT -->
+                                <div>
+                                    <x-label for="usdot" value="{{ __('USDOT') }}" />
+                                    <x-input id="usdot" type="text" name="usdot" class="block mt-1 w-full" />
+                                </div>
+                                <!-- SCAC -->
+                                <div>
+                                    <x-label for="scac" value="{{ __('SCAC') }}" />
+                                    <x-input id="scac" type="text" name="scac" class="block mt-1 w-full" />
+                                </div>
+                                <!-- CAAT -->
+                                <div>
+                                    <x-label for="caat" value="{{ __('CAAT') }}" />
+                                    <x-input id="caat" type="text" name="caat" class="block mt-1 w-full" />
+                                </div>
+                            </div>
+                        
+                            <div class="mt-4">
+                                <x-label for="services" value="{{ __('Select services') }}" />
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                    @foreach ($services as $service)
+                                        <div>
+                                            <label class="inline-flex items-center">
+                                                <input type="checkbox" name="services[]" value="{{ $service->id }}"
+                                                    {{ isset($supplier) && $supplier->services->contains($service->id) ? 'checked' : '' }}
+                                                    class="rounded border-gray-300 text-red-500 shadow-sm focus:ring focus:ring-offset-0 focus:ring-red-500 focus:ring-opacity-50">
+                                                <span class="ml-2 text-gray-700">{{ $service->name }}</span>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    @endif
+                </div>
+            </div>
+
 
             <!-- Buttons -->
             <div class="mt-6 flex space-x-4">

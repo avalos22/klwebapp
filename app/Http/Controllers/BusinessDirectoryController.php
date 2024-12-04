@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\BusinessDirectory;
 use App\Models\FactoryCompany;
 use App\Models\Contact;
+use App\Models\ServiceDetail;
+use App\Models\Supplier;
+use App\Models\ServiceSupplier;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -22,8 +25,9 @@ class BusinessDirectoryController extends Controller
     {
         $type = $request->get('type'); // Captura el tipo de registro
         $factoryCompanies = FactoryCompany::all(); // Datos necesarios para el formulario
+        $services = ServiceDetail::all();
 
-        return view('business_directory.create', compact('type', 'factoryCompanies'));
+        return view('business_directory.create', compact('type', 'factoryCompanies', 'services'));
     }
 
     private function storeDocument($request, $key, $directory = null)
@@ -67,22 +71,54 @@ class BusinessDirectoryController extends Controller
             'add_document' => 'nullable|file|max:2048',
             'tarifario' => 'nullable|file|max:2048',
         ];
+
+        // Validaciones adicionales para suppliers
+        if ($type === 'supplier') {
+            $rules = array_merge($rules, [
+                'mc_number' => 'nullable|string|max:20',
+                'usdot' => 'nullable|string|max:20',
+                'scac' => 'nullable|string|max:20',
+                'caat' => 'nullable|string|max:20',
+            ]);
+        }
     }
 
     public function storeDirectory(Request $request)
     {
+        $type = $request->input('type'); // Determina el tipo de registro
         // Validación de datos
-        $validated = $request->validate($this->validationRules());
+        $validated = $request->validate($this->validationRules($type));
 
         $picturePath = $this->storeDocument($request, 'picture');
         $documentPath = $this->storeDocument($request, 'add_document');
         $tarifarioPath = $this->storeDocument($request, 'tarifario');
 
         // Crear nueva entrada
-        BusinessDirectory::create(array_merge($validated, ['picture' => $picturePath, 'add_document' => $documentPath,'tarifario' => $tarifarioPath]));
+        $directory = BusinessDirectory::create(array_merge($validated, ['picture' => $picturePath, 'add_document' => $documentPath,'tarifario' => $tarifarioPath]));
+
+         // Si es un supplier, guarda los datos adicionales y servicios
+        if ($type === 'supplier') {
+            $supplier = Supplier::create([
+                'directory_entry_id' => $directory->id,
+                'mc_number' => $request->input('mc_number'),
+                'usdot' => $request->input('usdot'),
+                'scac' => $request->input('scac'),
+                'caat' => $request->input('caat'),
+            ]);
+
+            // Guardar servicios seleccionados en `services_suppliers`
+            if ($request->has('services')) {
+                foreach ($request->input('services') as $serviceId) {
+                    ServiceSupplier::create([
+                        'supplier_id' => $supplier->id,
+                        'id_service_detail' => $serviceId,
+                    ]);
+                }
+            }
+        }
 
         // Redirigir con éxito
-        return redirect()->route('business-directory.index')->with('success', 'Customer created successfully.');
+        return redirect()->route('business-directory.index')->with('success', $type . 'created successfully.');
     }
 
     public function edit($id)
@@ -95,6 +131,7 @@ class BusinessDirectoryController extends Controller
     public function update(Request $request, $id)
     {
         $directory = BusinessDirectory::findOrFail($id);
+        $type = $directory->type; // Determina el tipo actual
 
         // Validación
         $validated = $request->validate($this->validationRules());
@@ -105,6 +142,23 @@ class BusinessDirectoryController extends Controller
 
         // Actualizar entrada existente
         $directory->update(array_merge($validated, ['picture' => $picturePath, 'add_document' => $documentPath, 'tarifario' => $tarifarioPath]));
+
+        if ($type === 'supplier') {
+            $supplier = Supplier::updateOrCreate(
+                ['directory_entry_id' => $directory->id],
+                [
+                    'mc_number' => $request->input('mc_number'),
+                    'usdot' => $request->input('usdot'),
+                    'scac' => $request->input('scac'),
+                    'caat' => $request->input('caat'),
+                ]
+            );
+    
+            // Actualizar servicios en `services_suppliers`
+            if ($request->has('services')) {
+                $supplier->services()->sync($request->input('services'));
+            }
+        }
 
         return redirect()->route('business-directory.index')->with('success', 'Directory updated successfully!');
     }
@@ -140,4 +194,5 @@ class BusinessDirectoryController extends Controller
 
         return redirect()->route('business-directory.index')->with('success', 'Contact added successfully.');
     }
+
 }
