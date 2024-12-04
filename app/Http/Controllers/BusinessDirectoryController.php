@@ -123,9 +123,10 @@ class BusinessDirectoryController extends Controller
 
     public function edit($id)
     {
-        $directory = BusinessDirectory::findOrFail($id);
+        $directory = BusinessDirectory::with('supplier.services')->findOrFail($id);
         $factoryCompanies = FactoryCompany::all();
-        return view('business_directory.edit', compact('directory', 'factoryCompanies'));
+        $services = ServiceDetail::all(); // Carga los servicios disponibles
+        return view('business_directory.edit', compact('directory', 'factoryCompanies', 'services'));
     }
 
     public function update(Request $request, $id)
@@ -154,10 +155,23 @@ class BusinessDirectoryController extends Controller
                 ]
             );
     
-            // Actualizar servicios en `services_suppliers`
+            // Sincronizar servicios
             if ($request->has('services')) {
-                $supplier->services()->sync($request->input('services'));
+                // Construye un arreglo con los IDs de servicios y sus timestamps
+                $servicesWithTimestamps = [];
+                foreach ($request->input('services') as $serviceId) {
+                    $servicesWithTimestamps[$serviceId] = [
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Usa sync con datos adicionales
+                $supplier->services()->sync($servicesWithTimestamps);
+            } else {
+                $supplier->services()->sync([]); // Limpia los servicios si no se seleccionaron
             }
+            
         }
 
         return redirect()->route('business-directory.index')->with('success', 'Directory updated successfully!');

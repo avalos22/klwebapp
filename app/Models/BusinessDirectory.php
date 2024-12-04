@@ -41,4 +41,9 @@ class BusinessDirectory extends Model
     {
         return $this->hasMany(Contact::class, 'directory_entry_id');
     }
+
+    public function supplier()
+    {
+        return $this->hasOne(Supplier::class, 'directory_entry_id');
+    }
 }
