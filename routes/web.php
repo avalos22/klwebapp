@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\BusinessDirectoryController;
-use App\Http\Controllers\FTLController;
+use App\Http\Controllers\serviceController;
+use App\Http\Controllers\ExchangeRateController;
 
 // Ruta para la página de inicio
 // Route::get('/', function () { //maneja las solicitudes a la raíz de tu aplicación. Aquí se define que, al acceder al dominio principal, se mostrará la vista de login.
@@ -42,9 +43,9 @@ Route::middleware([
     // Route::get('/directory', function () {
     //     return view('dashboard');
     // })->name('directory');
-
+    Route::resource('exchange-rates', ExchangeRateController::class);
     // Ruta de los servicios
-    Route::resource('ftl', FTLController::class);
+    Route::resource('services', serviceController::class);
 
     // Grupo de rutas para Administración
     // Grupo de rutas para Administración de Usuarios (solo accesible por admin)

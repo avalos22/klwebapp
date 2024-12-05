@@ -4,7 +4,7 @@
         {{-- <x-button class="bg-red-500">
             {{ __('FTL') }}
         </x-button> --}}
-        <a href="{{ route('ftl.index') }}" class="inline-block bg-red-600 text-white py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline">
+        <a href="{{ route('services.index') }}" class="inline-block bg-red-600 text-white py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline">
             {{ __('FTL') }}
         </a>
         
