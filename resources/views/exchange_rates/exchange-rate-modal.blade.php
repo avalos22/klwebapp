@@ -34,10 +34,10 @@
             </div>
             <div class="flex justify-end">
                 <button type="button" wire:click="closeModal"
-                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 mr-2">
+                    class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-700 mr-2">
                     Cancel
                 </button>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Save
                 </button>
             </div>

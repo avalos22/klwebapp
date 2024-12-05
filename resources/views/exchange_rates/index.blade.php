@@ -1,39 +1,34 @@
-@extends('layouts.app')
-
-@section('content')
-    <div class="container">
-        <h1>Exchange Rates</h1>
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <a href="{{ route('exchange-rates.create') }}" class="btn btn-primary mb-3">Update Exchange Rate</a>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Rate</th>
-                    <th>Effective Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($exchangeRates as $rate)
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Business Directory') }}
+        </h2>
+    </x-slot>
+    <div class="ms-8 me-12 mt-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse bg-white shadow-md rounded-lg">
+                <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <tr>
-                        <td>{{ $rate->id }}</td>
-                        <td>{{ $rate->currency_from }}</td>
-                        <td>{{ $rate->currency_to }}</td>
-                        <td>{{ $rate->exchange_rate }}</td>
-                        <td>{{ $rate->effective_date }}</td>
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Rate</th>
+                        <th class="py-3 px-6 text-left">Effective Date</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    @foreach ($exchangeRates as $rate)
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">{{ $rate->id }}</td>
+                            <td class="py-3 px-6 text-left">{{ number_format($rate->exchange_rate, 2) }}</td>
+                            <td class="py-3 px-6 text-left">{{ $rate->effective_date }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-        {{ $exchangeRates->links() }}
+        {{-- Paginación --}}
+        <div class="mt-4">
+            {{ $exchangeRates->links('pagination::tailwind') }}
+        </div>
     </div>
-@endsection
+</x-app-layout>

@@ -14,9 +14,11 @@
                     {{-- <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link> --}}
-                     @livewire('exchange-rate-modal')
                 </div>
-
+                @livewire('exchange-rate-modal')
+                <a href="{{ route('exchange-rates.index') }}" class="pt-5 ml-1 text-xs text-gray-600 hover:underline">
+                   View Rates
+               </a>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
