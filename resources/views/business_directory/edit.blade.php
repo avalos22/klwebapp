@@ -7,7 +7,7 @@
 
     <div class="ms-12 me-12">
         <form action="{{ route('business-directory.update', $directory->id) }}" method="POST"
-            enctype="multipart/form-data" class="space-y-6">
+            enctype="multipart/form-data" class="mt-4 mb-12">
             @csrf
             @method('PUT') <!-- Método PUT para la actualización -->
 
@@ -277,7 +277,7 @@
             </div>
 
             <div class="w-full pt-1">
-                @if ($directory->type === 'station')
+                @if ($directory->type === 'station' || $directory->type === 'supplier')
                     <x-label for="tarifario" value="{{ __('Tarifario') }}" />
                     <div x-data="{ showTarifarioModal: false, tarifarioName: null }" class="mt-2">
                         <!-- Mostrar documento actual si existe -->

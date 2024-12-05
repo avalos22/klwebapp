@@ -19,8 +19,8 @@ class UsersList extends Component
     public function render()
     {
         // Combine search and pagination in one query
-    $users = User::where('name', 'like', '%' . $this->search . '%')->orwhere('email', 'like', '%' . $this->search . '%')->paginate(10); // Specify the number of items you want per page
-    return view('users.users-list', compact('users'));
+        $users = User::where('name', 'like', '%' . $this->search . '%')->orwhere('email', 'like', '%' . $this->search . '%')->paginate(10); // Specify the number of items you want per page
+        return view('users.users-list', compact('users'));
     }
 
     public function refreshComponent()

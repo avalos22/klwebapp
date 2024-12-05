@@ -259,6 +259,7 @@
 
                 <!-- Shipment Review -->
                 <div class="lg:col-span-5">
+                    {{-- aqui vamos a poner un componente para cargar lo que vamos poniendo en los inputs --}}
                     <x-label :value="__('Review')" class="font-bold" />
                     <div class="border p-4">
                         <p><strong>{{ __('Shipment ID:') }}</strong> KLCV314</p>

@@ -32,18 +32,6 @@ class CrudBusinessDirectory extends Component
     public $picture;
     public $tarifario;
 
-    public function mount()
-    {
-        $this->entries = BusinessDirectory::all();
-    }
-
-    public function render()
-    {
-        return view('livewire.business-directory', [
-            'entries' => BusinessDirectory::where('company', 'like', '%' . $this->searchTerm . '%')->get()
-        ]);
-    }
-
     public function create()
     {
         $this->validate([
@@ -89,7 +77,7 @@ class CrudBusinessDirectory extends Component
             'tarifario' => $this->tarifario,
         ]);
 
-        $this->resetInputFields();
+        // $this->resetInputFields();
         $this->entries = BusinessDirectory::all();
     }
 
