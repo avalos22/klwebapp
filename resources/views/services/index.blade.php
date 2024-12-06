@@ -7,8 +7,11 @@
 
 
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+
+        @livewire('service-form')
+
         <div class="p-6 bg-white border-b border-gray-200">
-            <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 p-2">
+            {{-- <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 p-2">
                 @csrf
 
                 <!-- Customer Info -->
@@ -257,32 +260,26 @@
                     </div>
                 </div>
 
-                <!-- Shipment Review -->
-                <div class="lg:col-span-5">
-                    {{-- aqui vamos a poner un componente para cargar lo que vamos poniendo en los inputs --}}
-                    <x-label :value="__('Review')" class="font-bold" />
-                    <div class="border p-4">
-                        <p><strong>{{ __('Shipment ID:') }}</strong> KLCV314</p>
-                        <p><strong>{{ __('Status:') }}</strong> Scheduled</p>
-                        <!-- More details -->
-                    </div>
-                </div>
-
-                {{-- <!-- Additional Data -->
-                        <div class="lg:col-span-12">
-                            <x-label :value="__('Additional Data')" class="font-bold mt-6" />
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <!-- Add fields for additional data -->
-                            </div>
-                        </div> --}}
-
                 <!-- Submit Button -->
                 <div class="md:col-span-12 mt-2 ml-auto">
                     <x-button class="w-full flex items-center justify-center">
                         {{ __('Create Shipment') }}
                     </x-button>
                 </div>
-            </form>
+            </form> --}}
+
+            <!-- Shipment Review -->
+            {{-- <div class="lg:col-span-5"> --}}
+                {{-- aqui vamos a poner un componente para cargar lo que vamos poniendo en los inputs --}}
+                {{-- <x-label :value="__('Review')" class="font-bold" />
+                <div class="border p-4">
+                    <p><strong>{{ __('Shipment ID:') }}</strong> KLCV314</p>
+                    <p><strong>{{ __('Status:') }}</strong> Scheduled</p>
+                    <!-- More details -->
+                </div>
+            </div> --}}
+
         </div>
     </div>
+    
 </x-app-layout>

@@ -37,6 +37,12 @@ class BusinessDirectory extends Model
         'tarifario'
     ];
 
+    public static function byType($type)
+    {
+        return static::where('type', $type); // Devuelve un Builder
+    }
+    
+    
     public function contacts()
     {
         return $this->hasMany(Contact::class, 'directory_entry_id');
