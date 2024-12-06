@@ -228,122 +228,9 @@
 
                     <hr>
                 </div>
-                <!-- Shipper Section -->
-                <div class="lg:col-span-6 border-r pr-2">
-                    <h2 class="text-red-500 font-bold mb-1">Shipper</h2>
-                    <hr class="mb-2">
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <x-label for="requested_pickup_date" :value="__('Requested Pickup Date')" class="text-xs" />
-                            <x-input wire:model="requested_pickup_date" wire:input="refreshPreview" type="date" id="requested_pickup_date"
-                                name="requested_pickup_date"
-                                class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
-                        </div>
-                        <div>
-                            <x-label for="pickup_time" :value="__('Time')" class="text-xs" />
-                            <x-input wire:model="pickup_time" wire:input="refreshPreview" type="time" id="pickup_time" name="pickup_time"
-                                class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
-                        </div>
-                        <div class="col-span-2">
-                            <x-label for="pickup_station" :value="__('Station (Pickup Location)')" class="text-xs" />
-                            <div class="flex items-center">
-                                <select wire:model="pickup_station" wire:change="refreshPreview" id="pickup_station" name="pickup_station"
-                                    class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
-                                    <option value="">Select Station</option>
-                                    @foreach ($stations as $station)
-                                        <option value="{{ $station->id }}">{{ $station->company }}</option>
-                                    @endforeach
-                                </select>
-                                <button wire:click.prevent="addStopOff('shipper')" type="button"
-                                    class="ml-2 px-2 py-1 bg-lime-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
-                                    +
-                                </button>
-                            </div>
-                            @foreach ($shipperStopOffs as $index => $stopOff)
-                                <div class="flex items-center mt-3">
-                                    <select wire:model="shipperStopOffs.{{ $index }}.station_id"
-                                        class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
-                                        <option value="">Select Stop-off Station</option>
-                                        @foreach ($stations as $station)
-                                            <option value="{{ $station->id }}">{{ $station->company }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button wire:click.prevent="removeStopOff('shipper', {{ $index }})"
-                                        type="button"
-                                        class="ml-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
-                                        ×
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
-                        <!-- Stop-offs -->
-
-                        <div class="col-span-2">
-                            <x-label for="border_crossing_date" :value="__('Scheduled Border Crossing Date')" class="text-xs" />
-                            <x-input wire:model="border_crossing_date" type="date" id="border_crossing_date"
-                                name="border_crossing_date"
-                                class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
-                        </div>
-                    </div>
-
-
-                </div>
-
-
-                <!-- Consignee Section -->
-                <div class="lg:col-span-6 pl-2">
-                    <h2 class="text-red-500 font-bold mb-1">Consignee</h2>
-                    <hr class="mb-2">
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <x-label for="delivery_date_requested" :value="__('Delivery Date Requested')" class="text-xs" />
-                            <x-input wire:model="delivery_date_requested" type="date" id="delivery_date_requested"
-                                name="delivery_date_requested"
-                                class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
-                        </div>
-                        <div>
-                            <x-label for="delivery_time_requested" :value="__('Delivery Time Requested')" class="text-xs" />
-                            <x-input wire:model="delivery_time_requested" type="time" id="delivery_time_requested"
-                                name="delivery_time_requested"
-                                class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
-                        </div>
-                        <div class="col-span-2">
-                            <x-label for="consignee_station" :value="__('Station (Delivery Location 1)')" class="text-xs" />
-                            <div class="flex items-center">
-                                <select wire:model="consignee_station" id="consignee_station"
-                                    name="consignee_station"
-                                    class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
-                                    <option value="">Select Station</option>
-                                    @foreach ($stations as $station)
-                                        <option value="{{ $station->id }}">{{ $station->company }}</option>
-                                    @endforeach
-                                </select>
-                                <button wire:click.prevent="addStopOff('consignee')" type="button"
-                                    class="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
-                                    +
-                                </button>
-                            </div>
-                            @foreach ($consigneeStopOffs as $index => $stopOff)
-                                <div class="flex items-center mt-3">
-                                    <select wire:model="consigneeStopOffs.{{ $index }}.station_id"
-                                        class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
-                                        <option value="">Select Stop-off Station</option>
-                                        @foreach ($stations as $station)
-                                            <option value="{{ $station->id }}">{{ $station->company }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button wire:click.prevent="removeStopOff('consignee', {{ $index }})"
-                                        type="button"
-                                        class="ml-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
-                                        ×
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+                
+                <livewire:shipper-consignee-section :stations="$stations" />
+            
             </div>
         </div>
 
@@ -383,14 +270,33 @@
                 <p><strong>{{ __('Total Yards:') }}</strong> {{ $total_yards ?? 'N/A' }}</p>
 
                 <!-- Shipper Data -->
-                 <h3 class="font-bold text-red-500 mt-4">{{ __('Shipper Info') }}</h3>
+                <h3 class="font-bold text-red-500 mt-4">{{ __('Shipper Info') }}</h3>
                 <p><strong>{{ __('Requested Pickup Date:') }}</strong> {{ $requested_pickup_date ?? 'N/A' }}</p>
                 <p><strong>{{ __('Time:') }}</strong> {{ $pickup_time ?? 'N/A' }}</p>
-                <p><strong>{{ __('Station (Pickup Location):') }}</strong> {{ $stations->firstWhere('id', $pickup_station)?->company ?? 'N/A' }}</p>
-                <p><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}</p>
+                <p><strong>{{ __('Station (Pickup Location):') }}</strong>
+                    {{ $stations->firstWhere('id', $pickup_station)?->company ?? 'N/A' }}</p>
+                <p><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}
+                </p>
                 <h4 class="font-bold mt-2">{{ __('Stop-offs:') }}</h4>
                 <ul>
                     @forelse ($shipperStopOffs as $stopOff)
+                        <li>
+                            {{ $stations->firstWhere('id', $stopOff['station_id'])?->company ?? 'N/A' }}
+                        </li>
+                    @empty
+                        <li>{{ __('No Stop-offs Added') }}</li>
+                    @endforelse
+                </ul>
+
+                <!-- Consignee Data -->
+                <h3 class="font-bold text-red-500 mt-4">{{ __('Consignee Info') }}</h3>
+                <p><strong>{{ __('Delivery Date Requested:') }}</strong> {{ $delivery_date_requested ?? 'N/A' }}</p>
+                <p><strong>{{ __('Delivery Time Requested:') }}</strong> {{ $delivery_time_requested ?? 'N/A' }}</p>
+                <p><strong>{{ __('Station (Delivery Location 1):') }}</strong>
+                    {{ $stations->firstWhere('id', $consignee_station)?->company ?? 'N/A' }}</p>
+                <h4 class="font-bold mt-2">{{ __('Stop-offs:') }}</h4>
+                <ul>
+                    @forelse ($consigneeStopOffs as $stopOff)
                         <li>
                             {{ $stations->firstWhere('id', $stopOff['station_id'])?->company ?? 'N/A' }}
                         </li>

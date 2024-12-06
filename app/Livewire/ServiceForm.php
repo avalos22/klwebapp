@@ -15,37 +15,36 @@ class ServiceForm extends Component
 {
     public $customer;
     public $rate_to_customer;
-    public $currency = 'USD'; // Moneda predeterminada
+    public $currency = 'USD';
     public $billing_currency_reference;
     public $pickup_number;
 
-    public $customers; // Lista de clientes
-    public $suppliers; // Lista de proveedores
-    public $stations; // Lista de estaciones
+    public $customers;
+    public $suppliers;
+    public $stations;
 
     public $selectedCustomer;
 
-    public $shipment_status; // ID seleccionado
-    public $shipmentStatuses; // Lista de opciones de estados
-    public $selectedShipmentStatus; // Estado seleccionado
+    public $shipment_status;
+    public $shipmentStatuses;
+    public $selectedShipmentStatus;
 
-    public $service_detail_id; // Almacenará el ID del tipo de servicio seleccionado
-    public $service_details; // Lista de opciones de tipos de servicio
+    public $service_detail_id;
+    public $service_details;
 
-    public $handling_types; // Lista de tipos de manejo
-    public $handling_type; // Tipo de manejo seleccionado
+    public $handling_types;
+    public $handling_type;
 
-    public $material_type; // ID del material seleccionado
-    public $materialTypes; // Lista de materiales
+    public $material_type;
+    public $materialTypes;
 
     public $freight_class;
     public $freightClasses;
-    
-    
-    public $expedited = false; // Estado por defecto
-    public $hazmat = false; 
-    public $team_driver = false; 
-    public $round_trip = false; 
+
+    public $expedited = false;
+    public $hazmat = false;
+    public $team_driver = false;
+    public $round_trip = false;
 
     public $un_number;
     public $count;
@@ -60,24 +59,20 @@ class ServiceForm extends Component
     public $uom_weight_options;
     public $uom_dimensions_options;
 
-    // public $shippers = [];
-    // public $consignees = [];
-    // public $stopOffs = [];
     public $shipperStopOffs = [];
-
-    public $consigneeStopOffs = []; // Array for consignee stop-offs
+    public $consigneeStopOffs = [];
+    public $pickup_station;
     public $delivery_date_requested;
     public $delivery_time_requested;
     public $consignee_station;
-
     public $requested_pickup_date;
-    public $pickup_station;
+    public $pickup_time;
     public $border_crossing_date;
 
-    public $pickup_date;
-    public $pickup_time;
-    public $delivery_date;
-    public $delivery_time;
+    protected $listeners = [
+        'updatePreview' => 'handleUpdatePreview',
+        'updateStopOffs' => 'handleUpdateStopOffs',
+    ];
 
     public function mount()
     {
@@ -91,7 +86,7 @@ class ServiceForm extends Component
         $this->materialTypes = MaterialType::all();
         $this->freightClasses = FreightClass::all();
         $this->uom_weight_options = \App\Models\Uom::where('description', 'Weight Units')->get();
-    $this->uom_dimensions_options = \App\Models\Uom::where('description', 'Units of Length')->get();
+        $this->uom_dimensions_options = \App\Models\Uom::where('description', 'Units of Length')->get();
     }
 
 
@@ -105,29 +100,58 @@ class ServiceForm extends Component
         $this->selectedShipmentStatus = ShipmentStatus::find($statusId);
     }
 
-    public function addStopOff($role)
+    public function handleUpdatePreview($data)
     {
-        if ($role === 'shipper') {
-            $this->shipperStopOffs[] = ['station_id' => null];
-        } elseif ($role === 'consignee') {
-            $this->consigneeStopOffs[] = ['station_id' => null];
+        if ($data['property'] === 'pickup_station') {
+            $this->pickup_station = $data['value'];
         }
+
+        if ($data['property'] === 'delivery_date_requested') {
+            $this->delivery_date_requested = $data['value'];
+        }
+
+        if ($data['property'] === 'requested_pickup_date') {
+            $this->requested_pickup_date = $data['value'];
+        }
+
+        if ($data['property'] === 'pickup_time') {
+            $this->pickup_time = $data['value'];
+        }
+
+        if ($data['property'] === 'border_crossing_date') {
+            $this->border_crossing_date = $data['value'];
+        }
+
+        if ($data['property'] === 'shipperStopOffs') {
+            $this->shipperStopOffs = $data['stopOffs']['shipper'] ?? [];
+        }
+
+        if ($data['property'] === 'consigneeStopOffs') {
+            $this->consigneeStopOffs = $data['stopOffs']['consignee'] ?? [];
+        }
+
+        if ($data['property'] === 'delivery_time_requested') {
+            $this->delivery_time_requested = $data['value'];
+        }
+
+        if ($data['property'] === 'consignee_station') {
+            $this->consignee_station = $data['value'];
+        }
+
+
     }
 
-    public function removeStopOff($role, $index)
+    public function handleUpdateStopOffs($data)
     {
-        if ($role === 'shipper') {
-            unset($this->shipperStopOffs[$index]);
-            $this->shipperStopOffs = array_values($this->shipperStopOffs); // Reindex array
-        } elseif ($role === 'consignee') {
-            unset($this->consigneeStopOffs[$index]);
-            $this->consigneeStopOffs = array_values($this->consigneeStopOffs); // Reindex array
-        }
+        $this->shipperStopOffs = $data['shipper'] ?? [];
+        $this->consigneeStopOffs = $data['consignee'] ?? [];
     }
 
     public function render()
     {
-        return view('services.service-form');
+        return view('services.service-form', [
+            'stations' => $this->stations,
+        ]);
     }
 
     public function refreshPreview()
