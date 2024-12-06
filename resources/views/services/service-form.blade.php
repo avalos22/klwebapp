@@ -236,19 +236,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <x-label for="requested_pickup_date" :value="__('Requested Pickup Date')" class="text-xs" />
-                            <x-input wire:model="requested_pickup_date" type="date" id="requested_pickup_date"
+                            <x-input wire:model="requested_pickup_date" wire:input="refreshPreview" type="date" id="requested_pickup_date"
                                 name="requested_pickup_date"
                                 class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
                         </div>
                         <div>
                             <x-label for="pickup_time" :value="__('Time')" class="text-xs" />
-                            <x-input wire:model="pickup_time" type="time" id="pickup_time" name="pickup_time"
+                            <x-input wire:model="pickup_time" wire:input="refreshPreview" type="time" id="pickup_time" name="pickup_time"
                                 class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs" />
                         </div>
                         <div class="col-span-2">
                             <x-label for="pickup_station" :value="__('Station (Pickup Location)')" class="text-xs" />
                             <div class="flex items-center">
-                                <select wire:model="pickup_station" id="pickup_station" name="pickup_station"
+                                <select wire:model="pickup_station" wire:change="refreshPreview" id="pickup_station" name="pickup_station"
                                     class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
                                     <option value="">Select Station</option>
                                     @foreach ($stations as $station)
@@ -256,7 +256,7 @@
                                     @endforeach
                                 </select>
                                 <button wire:click.prevent="addStopOff('shipper')" type="button"
-                                    class="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    class="ml-2 px-2 py-1 bg-lime-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
                                     +
                                 </button>
                             </div>
@@ -382,7 +382,22 @@
                     {{ $uom_dimensions_options->firstWhere('id', $uom_dimensions)?->name ?? '--' }}</p>
                 <p><strong>{{ __('Total Yards:') }}</strong> {{ $total_yards ?? 'N/A' }}</p>
 
-
+                <!-- Shipper Data -->
+                 <h3 class="font-bold text-red-500 mt-4">{{ __('Shipper Info') }}</h3>
+                <p><strong>{{ __('Requested Pickup Date:') }}</strong> {{ $requested_pickup_date ?? 'N/A' }}</p>
+                <p><strong>{{ __('Time:') }}</strong> {{ $pickup_time ?? 'N/A' }}</p>
+                <p><strong>{{ __('Station (Pickup Location):') }}</strong> {{ $stations->firstWhere('id', $pickup_station)?->company ?? 'N/A' }}</p>
+                <p><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}</p>
+                <h4 class="font-bold mt-2">{{ __('Stop-offs:') }}</h4>
+                <ul>
+                    @forelse ($shipperStopOffs as $stopOff)
+                        <li>
+                            {{ $stations->firstWhere('id', $stopOff['station_id'])?->company ?? 'N/A' }}
+                        </li>
+                    @empty
+                        <li>{{ __('No Stop-offs Added') }}</li>
+                    @endforelse
+                </ul>
 
 
             </div>

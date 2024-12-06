@@ -70,6 +70,10 @@ class ServiceForm extends Component
     public $delivery_time_requested;
     public $consignee_station;
 
+    public $requested_pickup_date;
+    public $pickup_station;
+    public $border_crossing_date;
+
     public $pickup_date;
     public $pickup_time;
     public $delivery_date;
