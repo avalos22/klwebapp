@@ -13,37 +13,28 @@ class UomSeeder extends Seeder
      */
     public function run(): void
     {
+        // Vaciar la tabla antes de rellenarla
+        //Uom::query()->delete();
         $uoms = [
             // Unidades de Peso
-            ['name' => 'kg', 'description' => 'Unidades de Peso'],
-            ['name' => 'g', 'description' => 'Unidades de Peso'],
-            ['name' => 'lb', 'description' => 'Unidades de Peso'],
-            ['name' => 'oz', 'description' => 'Unidades de Peso'],
-            ['name' => 'ton', 'description' => 'Unidades de Peso'],
+            ['name' => 'kg', 'description' => 'Weight Units'],
+            ['name' => 'g', 'description' => 'Weight Units'],
+            ['name' => 'lb', 'description' => 'Weight Units'],
+            ['name' => 'oz', 'description' => 'Weight Units'],
+            ['name' => 'ton', 'description' => 'Weight Units'],
 
             // Unidades de Longitud
-            ['name' => 'in', 'description' => 'Unidades de Longitud'],
-            ['name' => 'ft', 'description' => 'Unidades de Longitud'],
-            ['name' => 'cm', 'description' => 'Unidades de Longitud'],
-            ['name' => 'm', 'description' => 'Unidades de Longitud'],
-            ['name' => 'yd', 'description' => 'Unidades de Longitud'],
+            ['name' => 'in', 'description' => 'Units of Length'],
+            ['name' => 'ft', 'description' => 'Units of Length'],
+            ['name' => 'cm', 'description' => 'Units of Length'],
+            ['name' => 'm', 'description' => 'Units of Length'],
+            ['name' => 'yd', 'description' => 'Units of Length'],
 
             // Unidades de Volumen
-            ['name' => 'l', 'description' => 'Unidades de Volumen'],
-            ['name' => 'ml', 'description' => 'Unidades de Volumen'],
-            ['name' => 'm3', 'description' => 'Unidades de Volumen'],
-            ['name' => 'ft3', 'description' => 'Unidades de Volumen'],
-
-            // Unidades de Cantidad
-            ['name' => 'unit', 'description' => 'Unidades de Cantidad'],
-            ['name' => 'box', 'description' => 'Unidades de Cantidad'],
-            ['name' => 'pallet', 'description' => 'Unidades de Cantidad'],
-            ['name' => 'crate', 'description' => 'Unidades de Cantidad'],
-            ['name' => 'container', 'description' => 'Unidades de Cantidad'],
-
-            // Unidades Especiales
-            ['name' => 'teu', 'description' => 'Unidades Especiales'],
-            ['name' => 'feu', 'description' => 'Unidades Especiales'],
+            ['name' => 'l', 'description' => 'Volume Units'],
+            ['name' => 'ml', 'description' => 'Volume Units'],
+            ['name' => 'm3', 'description' => 'Volume Units'],
+            ['name' => 'ft3', 'description' => 'Volume Units'],
         ];
 
         foreach ($uoms as $uom) {

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             // Definir la clave primaria
-            $table->id();  
+            $table->id();
 
             // Relaciones con otras tablas (foráneas)
             $table->unsignedBigInteger('exchange_rate_id');
