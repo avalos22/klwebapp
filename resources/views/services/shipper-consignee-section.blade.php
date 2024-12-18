@@ -34,16 +34,18 @@
                     </button>
                 </div>
                 @foreach ($shipperStopOffs as $index => $stopOff)
-                    <div class="flex items-center mt-3">
+                    <div class="flex items-center mt-3" wire:key="shipper-{{ $stopOff['id'] }}">
                         <select wire:change="updateStopOffStation('shipper', {{ $index }}, $event.target.value)"
-                            class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
+                                class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
                             <option value="">Select Stop-off Station</option>
                             @foreach ($stations as $station)
-                                <option value="{{ $station->id }}">{{ $station->company }}</option>
+                                <option value="{{ $station->id }}" {{ $stopOff['station_id'] == $station->id ? 'selected' : '' }}>
+                                    {{ $station->company }}
+                                </option>
                             @endforeach
                         </select>
-                        <button wire:click.prevent="removeStopOff('shipper', {{ $index }})" type="button"
-                            class="ml-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button wire:click.prevent="removeStopOff('shipper', '{{ $stopOff['id'] }}')" type="button"
+                                class="ml-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
                             ×
                         </button>
                     </div>
@@ -96,16 +98,18 @@
                     </button>
                 </div>
                 @foreach ($consigneeStopOffs as $index => $stopOff)
-                    <div class="flex items-center mt-3">
+                    <div class="flex items-center mt-3" wire:key="consignee-{{ $stopOff['id'] }}">
                         <select
                             wire:change="updateStopOffStation('consignee', {{ $index }}, $event.target.value)"
                             class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
                             <option value="">Select Stop-off Station</option>
                             @foreach ($stations as $station)
-                                <option value="{{ $station->id }}">{{ $station->company }}</option>
+                                <option value="{{ $station->id }}" {{ $stopOff['station_id'] == $station->id ? 'selected' : '' }}>
+                                    {{ $station->company }}
+                                </option>
                             @endforeach
                         </select>
-                        <button wire:click.prevent="removeStopOff('consignee', {{ $index }})" type="button"
+                        <button wire:click.prevent="removeStopOff('consignee', '{{ $stopOff['id'] }}')" type="button"
                             class="ml-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-red-500">
                             ×
                         </button>

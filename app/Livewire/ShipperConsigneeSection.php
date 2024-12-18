@@ -22,8 +22,8 @@ class ShipperConsigneeSection extends Component
         $this->stations = $stations;
 
         // Inicializar estructuras de datos
-        $this->shipperStopOffs = [['station_id' => null]];
-        $this->consigneeStopOffs = [['station_id' => null]];
+        $this->shipperStopOffs = [['id' => uniqid(), 'station_id' => null]];
+        $this->consigneeStopOffs = [['id' => uniqid(), 'station_id' => null]];
     }
 
     public function updated($propertyName)
@@ -38,28 +38,32 @@ class ShipperConsigneeSection extends Component
 
     public function addStopOff($type)
     {
+        $stopOff = ['id' => uniqid(), 'station_id' => null];
+
         if ($type === 'shipper') {
             $this->shipperStopOffs[] = $stopOff;
         } elseif ($type === 'consignee') {
             $this->consigneeStopOffs[] = $stopOff;
         }
-
+    
         $this->dispatch('updateStopOffs', [
             'shipper' => $this->shipperStopOffs,
             'consignee' => $this->consigneeStopOffs,
         ]);
     }
 
-    public function removeStopOff($type, $index)
+    public function removeStopOff($type, $id)
     {
         if ($type === 'shipper') {
-            unset($this->shipperStopOffs[$index]);
-            $this->shipperStopOffs = array_values($this->shipperStopOffs);
+            $this->shipperStopOffs = array_values(array_filter($this->shipperStopOffs, function ($stopOff) use ($id) {
+                return $stopOff['id'] !== $id;
+            }));
         } elseif ($type === 'consignee') {
-            unset($this->consigneeStopOffs[$index]);
-            $this->consigneeStopOffs = array_values($this->consigneeStopOffs);
+            $this->consigneeStopOffs = array_values(array_filter($this->consigneeStopOffs, function ($stopOff) use ($id) {
+                return $stopOff['id'] !== $id;
+            }));
         }
-
+    
         $this->dispatch('updateStopOffs', [
             'shipper' => $this->shipperStopOffs,
             'consignee' => $this->consigneeStopOffs,
