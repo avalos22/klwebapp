@@ -39,9 +39,9 @@ class ShipperConsigneeSection extends Component
     public function addStopOff($type)
     {
         if ($type === 'shipper') {
-            $this->shipperStopOffs[] = ['station_id' => null];
+            $this->shipperStopOffs[] = $stopOff;
         } elseif ($type === 'consignee') {
-            $this->consigneeStopOffs[] = ['station_id' => null];
+            $this->consigneeStopOffs[] = $stopOff;
         }
 
         $this->dispatch('updateStopOffs', [
