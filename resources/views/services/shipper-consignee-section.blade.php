@@ -1,4 +1,4 @@
-<div class="lg:col-span-12">
+<div class="lg:col-span-12 grid grid-cols-2 gap-4">
     <!-- Shipper Section -->
     <div class="pr-2">
         <h2 class="text-red-500 font-bold mb-1">Shipper</h2>

@@ -10,6 +10,16 @@ use App\Models\ServiceDetail;
 use App\Models\HandlingType;
 use App\Models\MaterialType;
 use App\Models\FreightClass;
+// use App\Models\ExchangeRate;
+// use App\Models\Cargo;
+// use App\Models\Shipper;
+// use App\Models\Consignee;
+// use App\Models\StopOff;
+use App\Services\ServiceRegistration;
+use App\Services\CargoRegistration;
+// use App\Services\ShipperRegistration;
+// use App\Services\ConsigneeRegistration;
+// use App\Services\StopOffRegistration;
 
 class ServiceForm extends Component
 {
@@ -18,16 +28,18 @@ class ServiceForm extends Component
     public $currency = 'USD';
     public $billing_currency_reference;
     public $pickup_number;
-
     public $customers;
+    public $selectedCustomer;
+    public $shipment_status;
+    // public $shipmentStatuses;
+    // public $selectedShipmentStatus;
+
     public $suppliers;
     public $stations;
 
-    public $selectedCustomer;
+    
 
-    public $shipment_status;
-    public $shipmentStatuses;
-    public $selectedShipmentStatus;
+    
 
     public $service_detail_id;
     public $service_details;
@@ -72,15 +84,16 @@ class ServiceForm extends Component
     protected $listeners = [
         'updatePreview' => 'handleUpdatePreview',
         'updateStopOffs' => 'handleUpdateStopOffs',
+        'updateCustomerInfo' => 'updateCustomerInfo',
     ];
 
     public function mount()
     {
         // Filtrar los datos por type en la tabla business_directories desde el modelo BusinessDirectory
-        $this->customers = BusinessDirectory::byType('customer')->get(); // Asegúrate que esto devuelva una colección
+        // $this->customers = BusinessDirectory::byType('customer')->get(); // Asegúrate que esto devuelva una colección
         $this->suppliers = BusinessDirectory::byType('supplier')->get(); 
         $this->stations = BusinessDirectory::byType('station')->get();
-        $this->shipmentStatuses = ShipmentStatus::all();
+        // $this->shipmentStatuses = ShipmentStatus::all();
         $this->service_details = ServiceDetail::all();
         $this->handling_types = HandlingType::all();
         $this->materialTypes = MaterialType::all();
@@ -90,18 +103,38 @@ class ServiceForm extends Component
     }
 
 
-    public function updatedCustomer($customerId)
-    {
-        $this->selectedCustomer = BusinessDirectory::find($customerId);
-    }
+    // public function updatedCustomer($customerId)
+    // {
+    //     $this->selectedCustomer = BusinessDirectory::find($customerId);
+    // }
 
-    public function updatedShipmentStatus($statusId)
+    // public function updatedShipmentStatus($statusId)
+    // {
+    //     $this->selectedShipmentStatus = ShipmentStatus::find($statusId);
+    // }
+
+    public function updateCustomerInfo($data)
     {
-        $this->selectedShipmentStatus = ShipmentStatus::find($statusId);
+        $this->customer = $data['customer'];
+        $this->rate_to_customer = $data['rate_to_customer'];
+        $this->currency = $data['currency'];
+        $this->billing_currency_reference = $data['billing_currency_reference'];
+        $this->pickup_number = $data['pickup_number'];
+        $this->shipment_status = $data['shipment_status'];
+
+        $this->refreshPreview();
     }
 
     public function handleUpdatePreview($data)
     {
+        // if ($data['property'] === 'customer') {
+        //     $this->customer = $data['value'];
+        // }
+    
+        // if ($data['property'] === 'shipment_status') {
+        //     $this->shipment_status = $data['value'];
+        // }
+
         if ($data['property'] === 'pickup_station') {
             $this->pickup_station = $data['value'];
         }
@@ -159,4 +192,49 @@ class ServiceForm extends Component
         // Esto solo asegura que se refresque el componente.
     }
 
+    public function saveService()
+    {
+        // Verifica que $this->customer no sea null
+        if (is_null($this->customer)) {
+            // Maneja el error, por ejemplo, lanzando una excepción o retornando un mensaje de error
+            throw new \Exception('error', 'Please select a customer.');
+        }
+
+        // 1. Registrar cargo
+        $cargo = CargoRegistration::createCargo([
+            'handling_type' => $this->handling_type,
+            'material_type' => $this->material_type,
+            'freight_class' => $this->freight_class,
+            'count' => $this->count,
+            'stackable' => $this->stackable,
+            'weight' => $this->weight,
+            'uom_weight' => $this->uom_weight,
+            'length' => $this->length,
+            'width' => $this->width,
+            'height' => $this->height,
+            'uom_dimensions' => $this->uom_dimensions,
+            'total_yards' => $this->total_yards,
+        ]);
+
+        // 2. Llamar al servicio para registrar el servicio
+        $service = ServiceRegistration::createService([
+            'user_id' => auth()->id(),
+            'customer' => $this->customer,
+            'shipment_status' => $this->shipment_status,
+            'service_detail_id' => $this->service_detail_id,
+            'cargo_id' => $cargo->id, // Asignar el ID del cargo creado
+            'rate_to_customer' => $this->rate_to_customer,
+            'currency' => $this->currency,
+            'billing_currency_reference' => $this->billing_currency_reference,
+            'pickup_number' => $this->pickup_number,
+            'expedited' => $this->expedited,
+            'hazmat' => $this->hazmat,
+            'team_driver' => $this->team_driver,
+            'round_trip' => $this->round_trip,
+            'un_number' => $this->un_number,
+        ]);
+
+        // Mensaje de éxito
+        session()->flash('message', 'Service registered successfully!');
+    }
 }

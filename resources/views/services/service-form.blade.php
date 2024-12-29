@@ -4,8 +4,11 @@
 
         <!-- Customer Info -->
         <div class="lg:col-span-7">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">
-                <div class="divisor mt-5 md:col-span-12">
+            
+
+            <livewire:customer-info />
+
+                {{-- <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500 font-bold mb-1">Customer
                         <span class="text-black font-bold">Info</span>
                     </h2>
@@ -55,8 +58,11 @@
                             <option value="{{ $status->id }}">{{ $status->name }}</option>
                         @endforeach
                     </select>
-                </div>
-                <!-- Service Data and Cargo -->
+                </div> --}}
+
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">  
+                <!-- Service Data-->
                 <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500  font-bold mb-1">Service
                         <span class="text-black font-bold">Data</span>
@@ -103,6 +109,8 @@
                     <x-input wire:model="un_number" wire:input="refreshPreview" id="un_number" type="text"
                         name="un_number" placeholder="UN Num" class="block mt-1 w-full" />
                 </div>
+
+                 <!-- Service Cargo -->
                 <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500  font-bold mb-1">Cargo
                     </h2>
@@ -238,75 +246,84 @@
         <div class="lg:col-span-5">
             <x-label :value="__('Review')" class="font-bold" />
             <div class="border p-4">
-                <p><strong>{{ __('Customer:') }}</strong> {{ $selectedCustomer?->company ?? 'N/A' }}</p>
-                <p><strong>{{ __('Rate to Customer:') }}</strong> {{ $rate_to_customer ?? 'N/A' }}</p>
-                <p><strong>{{ __('Currency:') }}</strong> {{ $currency ?? 'N/A' }}</p>
-                <p><strong>{{ __('Billing Ref:') }}</strong> {{ $billing_currency_reference ?? 'N/A' }}</p>
-                <p><strong>{{ __('Pickup No.:') }}</strong> {{ $pickup_number ?? 'N/A' }}</p>
-                <p><strong>{{ __('Shipment Status:') }}</strong> {{ $selectedShipmentStatus?->name ?? 'N/A' }}</p>
-                <p><strong>{{ __('Shipment Type:') }}</strong>
+                <p class="text-xs"><strong>{{ __('Customer:') }}</strong> {{ $selectedCustomer?->company ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Rate to Customer:') }}</strong> {{ $rate_to_customer ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Currency:') }}</strong> {{ $currency ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Billing Ref:') }}</strong> {{ $billing_currency_reference ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Pickup No.:') }}</strong> {{ $pickup_number ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Shipment Status:') }}</strong> {{ $selectedShipmentStatus?->name ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Shipment Type:') }}</strong>
                     {{ $service_details->firstWhere('id', $service_detail_id)?->name ?? 'N/A' }}</p>
-                <p><strong>{{ __('Expedited:') }}</strong> {{ $expedited ? 'Yes' : 'No' }}</p>
-                <p><strong>{{ __('Hazmat:') }}</strong> {{ $hazmat ? 'Yes' : 'No' }}</p>
-                <p><strong>{{ __('Team Driver:') }}</strong> {{ $team_driver ? 'Yes' : 'No' }}</p>
-                <p><strong>{{ __('Round Trip:') }}</strong> {{ $round_trip ? 'Yes' : 'No' }}</p>
-                <p><strong>{{ __('UN Number:') }}</strong> {{ $un_number ?? 'N/A' }}</p>
-                <p><strong>{{ __('Handling Type:') }}</strong>
+                <p class="text-xs"><strong>{{ __('Expedited:') }}</strong> {{ $expedited ? 'Yes' : 'No' }}</p>
+                <p class="text-xs"><strong>{{ __('Hazmat:') }}</strong> {{ $hazmat ? 'Yes' : 'No' }}</p>
+                <p class="text-xs"><strong>{{ __('Team Driver:') }}</strong> {{ $team_driver ? 'Yes' : 'No' }}</p>
+                <p class="text-xs"><strong>{{ __('Round Trip:') }}</strong> {{ $round_trip ? 'Yes' : 'No' }}</p>
+                <p class="text-xs"><strong>{{ __('UN Number:') }}</strong> {{ $un_number ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Handling Type:') }}</strong>
                     {{ $handling_types->firstWhere('id', $handling_type)?->name ?? 'N/A' }}</p>
-                <p><strong>{{ __('Material Type:') }}</strong>
+                <p class="text-xs"><strong>{{ __('Material Type:') }}</strong>
                     {{ $materialTypes->firstWhere('id', $material_type)?->name ?? 'N/A' }}</p>
-                <p><strong>{{ __('Class:') }}</strong>
+                <p class="text-xs"><strong>{{ __('Class:') }}</strong>
                     {{ $freight_class ? $freightClasses->firstWhere('id', $freight_class)?->name : 'N/A' }}</p>
-                <p><strong>{{ __('Count:') }}</strong> {{ $count ?? 'N/A' }}</p>
-                <p><strong>{{ __('Stackable:') }}</strong> {{ $stackable ? 'YES' : 'NO' }}</p>
-                <p><strong>{{ __('Weight:') }}</strong> {{ $weight ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Count:') }}</strong> {{ $count ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Stackable:') }}</strong> {{ $stackable ? 'YES' : 'NO' }}</p>
+                <p class="text-xs"><strong>{{ __('Weight:') }}</strong> {{ $weight ?? 'N/A' }}
                     {{ $uom_weight_options->firstWhere('id', $uom_weight)?->name ?? '--' }}</p>
-                <p><strong>{{ __('Length:') }}</strong> {{ $length ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Length:') }}</strong> {{ $length ?? 'N/A' }}
                     {{ $uom_dimensions_options->firstWhere('id', $uom_dimensions)?->name ?? '--' }}</p>
-                <p><strong>{{ __('Width:') }}</strong> {{ $width ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Width:') }}</strong> {{ $width ?? 'N/A' }}
                     {{ $uom_dimensions_options->firstWhere('id', $uom_dimensions)?->name ?? '--' }}</p>
-                <p><strong>{{ __('Height:') }}</strong> {{ $height ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Height:') }}</strong> {{ $height ?? 'N/A' }}
                     {{ $uom_dimensions_options->firstWhere('id', $uom_dimensions)?->name ?? '--' }}</p>
-                <p><strong>{{ __('Total Yards:') }}</strong> {{ $total_yards ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Total Yards:') }}</strong> {{ $total_yards ?? 'N/A' }}</p>
 
                 <!-- Shipper Data -->
                 <h3 class="font-bold text-red-500 mt-4">{{ __('Shipper Info') }}</h3>
-                <p><strong>{{ __('Requested Pickup Date:') }}</strong> {{ $requested_pickup_date ?? 'N/A' }}</p>
-                <p><strong>{{ __('Time:') }}</strong> {{ $pickup_time ?? 'N/A' }}</p>
-                <p><strong>{{ __('Station (Pickup Location):') }}</strong>
+                <p class="text-xs"><strong>{{ __('Requested Pickup Date:') }}</strong> {{ $requested_pickup_date ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Time:') }}</strong> {{ $pickup_time ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Station (Pickup Location):') }}</strong>
                     {{ $stations->firstWhere('id', $pickup_station)?->company ?? 'N/A' }}</p>
-                <p><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}
                 </p>
-                <h4 class="font-bold mt-2">{{ __('Stop-offs:') }}</h4>
+                <h4 class="font-bold mt-2 text-xs">{{ __('Stop-offs:') }}</h4>
                 <ul>
                     @forelse ($shipperStopOffs as $stopOff)
-                        <li>
+                        <li class="text-xs">
                             {{ $stations->firstWhere('id', $stopOff['station_id'])?->company ?? 'N/A' }}
                         </li>
                     @empty
-                        <li>{{ __('No Stop-offs Added') }}</li>
+                        <li class="text-xs">{{ __('No Stop-offs Added') }}</li>
                     @endforelse
                 </ul>
 
                 <!-- Consignee Data -->
                 <h3 class="font-bold text-red-500 mt-4">{{ __('Consignee Info') }}</h3>
-                <p><strong>{{ __('Delivery Date Requested:') }}</strong> {{ $delivery_date_requested ?? 'N/A' }}</p>
-                <p><strong>{{ __('Delivery Time Requested:') }}</strong> {{ $delivery_time_requested ?? 'N/A' }}</p>
-                <p><strong>{{ __('Station (Delivery Location 1):') }}</strong>
+                <p class="text-xs"><strong>{{ __('Delivery Date Requested:') }}</strong> {{ $delivery_date_requested ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Delivery Time Requested:') }}</strong> {{ $delivery_time_requested ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Station (Delivery Location 1):') }}</strong>
                     {{ $stations->firstWhere('id', $consignee_station)?->company ?? 'N/A' }}</p>
-                <h4 class="font-bold mt-2">{{ __('Stop-offs:') }}</h4>
+                <h4 class="font-bold mt-2 text-xs">{{ __('Stop-offs:') }}</h4>
                 <ul>
                     @forelse ($consigneeStopOffs as $stopOff)
-                        <li>
+                        <li class="text-xs">
                             {{ $stations->firstWhere('id', $stopOff['station_id'])?->company ?? 'N/A' }}
                         </li>
                     @empty
-                        <li>{{ __('No Stop-offs Added') }}</li>
+                        <li class="text-xs">{{ __('No Stop-offs Added') }}</li>
                     @endforelse
                 </ul>
 
 
             </div>
+        </div>
+
+        <div class="mt-4">
+            <button 
+                wire:click="saveService" 
+                type="button" 
+                class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Save Service
+            </button>
         </div>
     </form>
 </div>
