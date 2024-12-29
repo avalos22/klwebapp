@@ -4,11 +4,11 @@
 
         <!-- Customer Info -->
         <div class="lg:col-span-7">
-            
 
-            <livewire:customer-info />
 
-                {{-- <div class="divisor mt-5 md:col-span-12">
+            <livewire:customer-info wire:model="customer" wire:model="shipment_status" />
+
+            {{-- <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500 font-bold mb-1">Customer
                         <span class="text-black font-bold">Info</span>
                     </h2>
@@ -61,7 +61,7 @@
                 </div> --}}
 
 
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">  
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">
                 <!-- Service Data-->
                 <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500  font-bold mb-1">Service
@@ -110,7 +110,7 @@
                         name="un_number" placeholder="UN Num" class="block mt-1 w-full" />
                 </div>
 
-                 <!-- Service Cargo -->
+                <!-- Service Cargo -->
                 <div class="divisor mt-5 md:col-span-12">
                     <h2 class="text-red-500  font-bold mb-1">Cargo
                     </h2>
@@ -151,12 +151,11 @@
                 </div>
                 <div class="mt-2 md:col-span-2">
                     <x-label for="count" :value="__('Count')" class="text-xs" />
-                    <x-input wire:model="count" wire:input="refreshPreview" id="count" type="number"
-                        name="count" placeholder="Enter count" class="block mt-1 w-full" />
+                    <x-input wire:model="count" wire:input="refreshPreview" id="count" type="number" name="count"
+                        placeholder="Enter count" class="block mt-1 w-full" />
                 </div>
                 <div class="mt-2 md:col-span-2">
-                    <div x-data="{ on: @entangle('stackable') }" wire:change="refreshPreview"
-                        class="mt-6 flex items-center space-x-2">
+                    <div x-data="{ on: @entangle('stackable') }" wire:change="refreshPreview" class="mt-6 flex items-center space-x-2">
                         <div class="flex items-center">
                             <label class="flex items-center cursor-pointer">
                                 <div class="relative">
@@ -236,9 +235,9 @@
 
                     <hr>
                 </div>
-                
+
                 <livewire:shipper-consignee-section :stations="$stations" />
-            
+
             </div>
         </div>
 
@@ -246,12 +245,16 @@
         <div class="lg:col-span-5">
             <x-label :value="__('Review')" class="font-bold" />
             <div class="border p-4">
-                <p class="text-xs"><strong>{{ __('Customer:') }}</strong> {{ $selectedCustomer?->company ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Rate to Customer:') }}</strong> {{ $rate_to_customer ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Customer:') }}</strong> {{ $selectedCustomer?->company ?? 'N/A' }}
+                </p>
+                <p class="text-xs"><strong>{{ __('Rate to Customer:') }}</strong> {{ $rate_to_customer ?? 'N/A' }}
+                </p>
                 <p class="text-xs"><strong>{{ __('Currency:') }}</strong> {{ $currency ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Billing Ref:') }}</strong> {{ $billing_currency_reference ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Billing Ref:') }}</strong>
+                    {{ $billing_currency_reference ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Pickup No.:') }}</strong> {{ $pickup_number ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Shipment Status:') }}</strong> {{ $selectedShipmentStatus?->name ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Shipment Status:') }}</strong>
+                    {{ $selectedShipmentStatus?->name ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Shipment Type:') }}</strong>
                     {{ $service_details->firstWhere('id', $service_detail_id)?->name ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Expedited:') }}</strong> {{ $expedited ? 'Yes' : 'No' }}</p>
@@ -279,11 +282,13 @@
 
                 <!-- Shipper Data -->
                 <h3 class="font-bold text-red-500 mt-4">{{ __('Shipper Info') }}</h3>
-                <p class="text-xs"><strong>{{ __('Requested Pickup Date:') }}</strong> {{ $requested_pickup_date ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Requested Pickup Date:') }}</strong>
+                    {{ $requested_pickup_date ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Time:') }}</strong> {{ $pickup_time ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Station (Pickup Location):') }}</strong>
                     {{ $stations->firstWhere('id', $pickup_station)?->company ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Scheduled Border Crossing Date:') }}</strong> {{ $border_crossing_date ?? 'N/A' }}
+                <p class="text-xs"><strong>{{ __('Scheduled Border Crossing Date:') }}</strong>
+                    {{ $border_crossing_date ?? 'N/A' }}
                 </p>
                 <h4 class="font-bold mt-2 text-xs">{{ __('Stop-offs:') }}</h4>
                 <ul>
@@ -298,8 +303,10 @@
 
                 <!-- Consignee Data -->
                 <h3 class="font-bold text-red-500 mt-4">{{ __('Consignee Info') }}</h3>
-                <p class="text-xs"><strong>{{ __('Delivery Date Requested:') }}</strong> {{ $delivery_date_requested ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Delivery Time Requested:') }}</strong> {{ $delivery_time_requested ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Delivery Date Requested:') }}</strong>
+                    {{ $delivery_date_requested ?? 'N/A' }}</p>
+                <p class="text-xs"><strong>{{ __('Delivery Time Requested:') }}</strong>
+                    {{ $delivery_time_requested ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Station (Delivery Location 1):') }}</strong>
                     {{ $stations->firstWhere('id', $consignee_station)?->company ?? 'N/A' }}</p>
                 <h4 class="font-bold mt-2 text-xs">{{ __('Stop-offs:') }}</h4>
@@ -317,13 +324,28 @@
             </div>
         </div>
 
-        <div class="mt-4">
-            <button 
-                wire:click="saveService" 
-                type="button" 
-                class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="lg:col-span-5 mt-4">
+            <button wire:click="saveService" type="button"
+                class="px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500
+           bg-blue-500 hover:bg-blue-600
+           disabled:bg-gray-400 disabled:cursor-not-allowed"
+                wire:loading.attr="disabled" wire:target="saveService" :disabled="$isSaving">
                 Save Service
             </button>
+            <span wire:loading wire:target="saveService" class="text-sm text-gray-500">
+                Saving...
+            </span>
+            @if (session()->has('message'))
+                <div class="p-2 bg-green-200 text-green-700 rounded-md">
+                    {{ session('message') }}
+                </div>
+            @endif
+
+            @if (session()->has('error'))
+                <div class="p-2 bg-red-200 text-red-700 rounded-md">
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
     </form>
 </div>

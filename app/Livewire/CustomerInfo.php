@@ -20,10 +20,12 @@ class CustomerInfo extends Component
     public $selectedShipmentStatus;
     public $customers;
 
-    public function mount()
+    public function mount($customer = null, $shipment_status = null)
     {
         $this->customers = BusinessDirectory::byType('customer')->get();
         $this->shipmentStatuses = ShipmentStatus::all();
+        $this->customer = $customer;
+        $this->shipment_status = $shipment_status;
     }
 
     public function updated($propertyName)
@@ -41,23 +43,23 @@ class CustomerInfo extends Component
     public function updatedCustomer($customerId)
     {
         $this->selectedCustomer = BusinessDirectory::find($customerId);
-
-        // Emitir evento para ServiceForm
+    
         $this->dispatch('updatePreview', [
             'property' => 'customer',
             'value' => $customerId,
         ]);
     }
+
     public function updatedShipmentStatus($statusId)
     {
         $this->selectedShipmentStatus = ShipmentStatus::find($statusId);
 
-        // Emitir evento para ServiceForm
         $this->dispatch('updatePreview', [
             'property' => 'shipment_status',
             'value' => $statusId,
         ]);
     }
+
     public function render()
     {
         return view('services.customer-info');
