@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+
 use App\Models\{
     Service,
     BusinessDirectory,
@@ -10,15 +11,24 @@ use App\Models\{
     ServiceDetail,
     HandlingType,
     MaterialType,
-    FreightClass
+    FreightClass,
+    UrgencyType,
+    Uom,
 };
 use App\Services\{
     ServiceRegistration,
-    CargoRegistration
+    CargoRegistration,
+    ShipperRegistration,
+    ConsigneeRegistration,
+    UrgencyLtlRegistration,
+    StopOffRegistration,
 };
+use Illuminate\Support\Facades\Log;
 
 class ServiceForm extends Component
 {
+    public $service_id;
+
     public $customer;
     public $rate_to_customer;
     public $currency = 'USD';
@@ -64,13 +74,33 @@ class ServiceForm extends Component
 
     public $shipperStopOffs = [];
     public $consigneeStopOffs = [];
-    public $pickup_station;
-    public $delivery_date_requested;
-    public $delivery_time_requested;
+    
     public $consignee_station;
-    public $requested_pickup_date;
-    public $pickup_time;
-    public $border_crossing_date;
+    public $delivery_date_requested; // Consignees
+    public $delivery_time_requested; // Consignees
+    public $actual_delivery_date; // Consignees
+    public $actual_time; // Consignees
+    public $withdrawal_date; // Consignees
+
+    public $pickup_station;
+    public $requested_pickup_date; // Shippers
+    public $pickup_time; // Shippers
+    public $scheduled_border_crossing_date; // Shippers
+    public $drop_reception_date; // Shippers
+
+    //urgency_ltl urgency_types
+    public $urgency_types;
+    public $urgency_type;
+    public $emergency_company;
+    public $company_id;
+    public $phone;
+
+    public $container_modality; // Modalidad: single / full
+    public $container_number;
+    public $container_size;
+    public $container_weight;
+    public $container_uom;
+    public $container_material_type;
 
     public $isSaving = false;
 
@@ -78,85 +108,47 @@ class ServiceForm extends Component
         'updatePreview' => 'handleUpdatePreview',
         'updateCustomerInfo' => 'updateCustomerInfo',
         'updateStopOffs' => 'handleUpdateStopOffs',
-        'refreshPreview' => '$refresh'
     ];
 
     public function mount()
     {
-        // Filtrar los datos por type en la tabla business_directories desde el modelo BusinessDirectory
-        // $this->customers = BusinessDirectory::byType('customer')->get(); // Asegúrate que esto devuelva una colección
+        $this->loadData();
+    }
+
+    private function loadData()
+    {
         $this->suppliers = BusinessDirectory::byType('supplier')->get();
         $this->stations = BusinessDirectory::byType('station')->get();
-        // $this->shipmentStatuses = ShipmentStatus::all();
         $this->service_details = ServiceDetail::all();
         $this->handling_types = HandlingType::all();
         $this->materialTypes = MaterialType::all();
         $this->freightClasses = FreightClass::all();
-        $this->uom_weight_options = \App\Models\Uom::where('description', 'Weight Units')->get();
-        $this->uom_dimensions_options = \App\Models\Uom::where('description', 'Units of Length')->get();
+        $this->urgency_types = UrgencyType::all();
+        $this->uom_weight_options = Uom::where('description', 'Weight Units')->get();
+        $this->uom_dimensions_options = Uom::where('description', 'Units of Length')->get();
     }
 
     public function updateCustomerInfo($data)
     {
-        $this->customer = $data['customer'];
-        $this->rate_to_customer = $data['rate_to_customer'];
-        $this->currency = $data['currency'];
-        $this->billing_currency_reference = $data['billing_currency_reference'];
-        $this->pickup_number = $data['pickup_number'];
-        $this->shipment_status = $data['shipment_status'];
+        foreach ($data as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
+        }
     }
 
     public function handleUpdatePreview($data)
     {
-
-        if ($data['property'] === 'customer') {
-            $this->customer = $data['value'];
-            $this->selectedCustomer = BusinessDirectory::find($data['value']);
-        }
-
         if (isset($data['property'], $data['value'])) {
             $this->{$data['property']} = $data['value'];
-        }
 
-        if ($data['property'] === 'shipment_status') {
-            $this->shipment_status = $data['value'];
-            $this->selectedShipmentStatus = ShipmentStatus::find($data['value']);
-        }
+            if ($data['property'] === 'customer') {
+                $this->selectedCustomer = BusinessDirectory::find($data['value']);
+            }
 
-        if ($data['property'] === 'pickup_station') {
-            $this->pickup_station = $data['value'];
-        }
-
-        if ($data['property'] === 'delivery_date_requested') {
-            $this->delivery_date_requested = $data['value'];
-        }
-
-        if ($data['property'] === 'requested_pickup_date') {
-            $this->requested_pickup_date = $data['value'];
-        }
-
-        if ($data['property'] === 'pickup_time') {
-            $this->pickup_time = $data['value'];
-        }
-
-        if ($data['property'] === 'border_crossing_date') {
-            $this->border_crossing_date = $data['value'];
-        }
-
-        if ($data['property'] === 'shipperStopOffs') {
-            $this->shipperStopOffs = $data['stopOffs']['shipper'] ?? [];
-        }
-
-        if ($data['property'] === 'consigneeStopOffs') {
-            $this->consigneeStopOffs = $data['stopOffs']['consignee'] ?? [];
-        }
-
-        if ($data['property'] === 'delivery_time_requested') {
-            $this->delivery_time_requested = $data['value'];
-        }
-
-        if ($data['property'] === 'consignee_station') {
-            $this->consignee_station = $data['value'];
+            if ($data['property'] === 'shipment_status') {
+                $this->selectedShipmentStatus = ShipmentStatus::find($data['value']);
+            }
         }
     }
 
@@ -164,6 +156,238 @@ class ServiceForm extends Component
     {
         $this->shipperStopOffs = $data['shipper'] ?? [];
         $this->consigneeStopOffs = $data['consignee'] ?? [];
+    }
+
+    public function refreshPreview()
+    {
+        // Esto solo asegura que se refresque el componente.
+    }
+
+    public function saveService()
+    {
+        if ($this->isSaving) {
+            return; 
+        }
+
+        $this->isSaving = true;
+
+        try {
+            // dd($this->shipperStopOffs);
+
+            $this->validateData(); // Valida los datos antes de proceder
+
+            // Register cargo debe ser el primer registro ya que se necesita el id para el servicio 
+            $cargo = CargoRegistration::createCargo($this->getCargoData());
+            $urgencyLtl = UrgencyLtlRegistration::createUrgencyLtl($this->getUrgencyLtlData());
+            
+            if (!$urgencyLtl || !$urgencyLtl->id) {
+                throw new \Exception('Failed to create UrgencyLtl or ID is missing.');
+            }
+            // Register service
+            $serviceData = $this->getServiceData($cargo->id);
+            $serviceData['urgency_ltl_id'] = $urgencyLtl->id;
+
+            $service = ServiceRegistration::createService($serviceData);
+            $this->service_id = $service->id;
+
+            // Register shipper
+            $shipper = ShipperRegistration::createShipper($this->getShipperData());
+            // Register consignee
+            $consignee = ConsigneeRegistration::createConsignee($this->getConsigneeData());
+            // Registrar stop-offs
+            $this->registerStopOffs();
+
+            session()->flash('message', 'Service registered successfully!');
+
+            // Redirige a la pantalla inicial
+            return redirect()->route('dashboard'); // Cambia 'home' por el nombre de tu ruta inicial
+
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        } finally {
+            $this->isSaving = false;
+        }
+    }
+
+    private function validateData()
+    {
+        if (is_null($this->customer)) {
+            throw new \Exception('Please select a customer.');
+        }
+
+        if (empty($this->shipperStopOffs) || empty($this->consigneeStopOffs)) {
+            throw new \Exception('Stop-offs for shipper and consignee are required.');
+        }
+    }
+
+    private function getCargoData()
+    {
+        return [
+            'handling_type' => $this->handling_type,
+            'material_type' => $this->material_type,
+            'freight_class' => $this->freight_class,
+            'count' => $this->count,
+            'stackable' => $this->stackable,
+            'weight' => $this->weight,
+            'uom_weight' => $this->uom_weight,
+            'length' => $this->length,
+            'width' => $this->width,
+            'height' => $this->height,
+            'uom_dimensions' => $this->uom_dimensions,
+            'total_yards' => $this->total_yards,
+        ];
+    }
+
+    private function getUrgencyLtlData()
+    {
+        return [
+            'type' => $this->urgency_type,
+            'emergency_company' => $this->emergency_company,
+            'company_ID' => $this->company_id,
+            'phone' => $this->phone,
+        ];
+    }
+
+    private function getServiceData($cargoId)
+    {
+        return [
+            'user_id' => auth()->id(),
+            'customer' => $this->customer,
+            'shipment_status' => $this->shipment_status,
+            'service_detail_id' => $this->service_detail_id,
+            'cargo_id' => $cargoId,
+            'rate_to_customer' => $this->rate_to_customer,
+            'currency' => $this->currency,
+            'billing_currency_reference' => $this->billing_currency_reference,
+            'pickup_number' => $this->pickup_number,
+            'expedited' => $this->expedited,
+            'hazmat' => $this->hazmat,
+            'team_driver' => $this->team_driver,
+            'round_trip' => $this->round_trip,
+            'un_number' => $this->un_number,
+            'urgency_ltl_id' => $this->urgency_type,
+        ];
+    }
+
+    private function getShipperData()
+    {
+        return [
+            'service_id' => $this->service_id,
+            'requested_pickup_date' => $this->requested_pickup_date,
+            'time' => $this->pickup_time ?? '00:00:00',
+            'scheduled_border_crossing_date' => $this->scheduled_border_crossing_date,
+            'drop_reception_date' => $this->drop_reception_date,
+        ];
+    }
+
+    private function getConsigneeData()
+    { 
+        return [
+            'service_id' => $this->service_id,
+            'delivery_date_requested' => $this->delivery_date_requested,
+            'delivery_time_requested' => $this->delivery_time_requested,
+            'actual_delivery_date' => $this->actual_delivery_date,
+            'actual_time' => $this->actual_time,
+            'withdrawal_date' => $this->withdrawal_date,
+        ];
+    }
+
+    private function registerStopOffs()
+    {
+        Log::info('Registering stop-offs for shippers and consignees', [
+            'pickup_station' => $this->pickup_station,
+            'shipperStopOffs' => $this->shipperStopOffs,
+            'consignee_station' => $this->consignee_station,
+            'consigneeStopOffs' => $this->consigneeStopOffs,
+        ]);
+    
+        // Registrar el pickup_station como la primera posición
+        if (!empty($this->pickup_station)) {
+            StopOffRegistration::createStopOff([
+                'service_id' => $this->service_id,
+                'role' => 'shipper',
+                'business_directory_id' => $this->pickup_station, // Estación del shipper
+                'position' => 0, // Posición en el arreglo
+            ]);
+    
+            Log::info('Pickup station registered successfully', [
+                'pickup_station' => $this->pickup_station,
+            ]);
+        } else {
+            Log::error("Missing 'pickup_station'");
+            throw new \Exception("Missing 'pickup_station'.");
+        }
+    
+        // Registrar stop-offs para shippers
+        foreach ($this->shipperStopOffs as $index => $stopOff) {
+            Log::info('Processing shipper stop-off', [
+                'index' => $index,
+                'stopOff' => $stopOff,
+            ]);
+    
+            if (empty($stopOff['station_id'])) {
+                Log::error("Missing 'station_id' in shipper stop-off at position {$index}", [
+                    'stopOff' => $stopOff,
+                ]);
+                throw new \Exception("Missing 'station_id' in shipper stop-off at position {$index}.");
+            }
+    
+            StopOffRegistration::createStopOff([
+                'service_id' => $this->service_id,
+                'role' => 'shipper',
+                'business_directory_id' => $stopOff['station_id'], // Estación del shipper
+                'position' => $index + 1, // Posición en el arreglo
+            ]);
+    
+            Log::info('Shipper stop-off registered successfully', [
+                'index' => $index,
+                'stopOff' => $stopOff,
+            ]);
+        }
+    
+        // Registrar el consignee_station como la primera posición
+        if (!empty($this->consignee_station)) {
+            StopOffRegistration::createStopOff([
+                'service_id' => $this->service_id,
+                'role' => 'consignee',
+                'business_directory_id' => $this->consignee_station, // Estación del consignee
+                'position' => 0, // Posición en el arreglo
+            ]);
+    
+            Log::info('Consignee station registered successfully', [
+                'consignee_station' => $this->consignee_station,
+            ]);
+        } else {
+            Log::error("Missing 'consignee_station'");
+            throw new \Exception("Missing 'consignee_station'.");
+        }
+    
+        // Registrar stop-offs para consignees
+        foreach ($this->consigneeStopOffs as $index => $stopOff) {
+            Log::info('Processing consignee stop-off', [
+                'index' => $index,
+                'stopOff' => $stopOff,
+            ]);
+    
+            if (empty($stopOff['station_id'])) {
+                Log::error("Missing 'station_id' in consignee stop-off at position {$index}", [
+                    'stopOff' => $stopOff,
+                ]);
+                throw new \Exception("Missing 'station_id' in consignee stop-off at position {$index}.");
+            }
+    
+            StopOffRegistration::createStopOff([
+                'service_id' => $this->service_id,
+                'role' => 'consignee',
+                'business_directory_id' => $stopOff['station_id'], // Estación del consignee
+                'position' => $index + 1, // Posición en el arreglo
+            ]);
+    
+            Log::info('Consignee stop-off registered successfully', [
+                'index' => $index,
+                'stopOff' => $stopOff,
+            ]);
+        }
     }
 
     public function render()
@@ -177,70 +401,4 @@ class ServiceForm extends Component
         ]);
     }
 
-    public function refreshPreview()
-    {
-        // Esto solo asegura que se refresque el componente.
-    }
-
-    public function saveService()
-    {
-
-        // Verifica si ya está en proceso de guardado
-        if ($this->isSaving) {
-            return; // Evita que se ejecute otra vez
-        }
-
-        $this->isSaving = true;
-
-        // Verifica que $this->customer no sea null
-        if (is_null($this->customer)) {
-            // Maneja el error, por ejemplo, lanzando una excepción o retornando un mensaje de error
-            throw new \Exception('error', 'Please select a customer.');
-        }
-
-        try {
-
-            // 1. Registrar cargo
-            $cargo = CargoRegistration::createCargo([
-                'handling_type' => $this->handling_type,
-                'material_type' => $this->material_type,
-                'freight_class' => $this->freight_class,
-                'count' => $this->count,
-                'stackable' => $this->stackable,
-                'weight' => $this->weight,
-                'uom_weight' => $this->uom_weight,
-                'length' => $this->length,
-                'width' => $this->width,
-                'height' => $this->height,
-                'uom_dimensions' => $this->uom_dimensions,
-                'total_yards' => $this->total_yards,
-            ]);
-
-            // 2. Llamar al servicio para registrar el servicio
-            $service = ServiceRegistration::createService([
-                'user_id' => auth()->id(),
-                'customer' => $this->customer,
-                'shipment_status' => $this->shipment_status,
-                'service_detail_id' => $this->service_detail_id,
-                'cargo_id' => $cargo->id, // Asignar el ID del cargo creado
-                'rate_to_customer' => $this->rate_to_customer,
-                'currency' => $this->currency,
-                'billing_currency_reference' => $this->billing_currency_reference,
-                'pickup_number' => $this->pickup_number,
-                'expedited' => $this->expedited,
-                'hazmat' => $this->hazmat,
-                'team_driver' => $this->team_driver,
-                'round_trip' => $this->round_trip,
-                'un_number' => $this->un_number,
-            ]);
-
-            // Mensaje de éxito
-            session()->flash('message', 'Service registered successfully!');
-        } catch (\Exception $e) {
-            // Manejar errores y mostrar un mensaje
-            session()->flash('error', 'There was an error saving the service. Please try again.');
-        } finally {
-            $this->isSaving = false; // Restablece el estado
-        }
-    }
 }

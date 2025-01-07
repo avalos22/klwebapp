@@ -16,7 +16,7 @@ class ServiceDetailsSeeder extends Seeder
         $services = [
             ['name' => 'FTL', 'description' => 'Full Truckload services'],
             ['name' => 'LTL', 'description' => 'Less Than Truckload services'],
-            ['name' => 'Container Drayge', 'description' => 'Container drayage services'],
+            ['name' => 'Container Drayage', 'description' => 'Container Drayage services'],
             ['name' => 'Air Freight', 'description' => 'Air freight transportation'],
             ['name' => 'Charter', 'description' => 'Charter services'],
             ['name' => 'Hand Carrier', 'description' => 'Hand carrier services'],

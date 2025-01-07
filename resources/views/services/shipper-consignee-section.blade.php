@@ -24,7 +24,7 @@
                         wire:change="updatePreview('pickup_station', $event.target.value)" id="pickup_station"
                         class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs">
                         <option value="">Select Station</option>
-                        @foreach ($stations as $station)
+                        @foreach ($stations as $station) 
                             <option value="{{ $station->id }}">{{ $station->company }}</option>
                         @endforeach
                     </select>

@@ -2,64 +2,9 @@
     <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 p-2">
         @csrf
 
-        <!-- Customer Info -->
         <div class="lg:col-span-7">
-
-
+            <!-- Customer Info -->
             <livewire:customer-info wire:model="customer" wire:model="shipment_status" />
-
-            {{-- <div class="divisor mt-5 md:col-span-12">
-                    <h2 class="text-red-500 font-bold mb-1">Customer
-                        <span class="text-black font-bold">Info</span>
-                    </h2>
-                    <hr>
-                </div>
-                <div class="mt-2 md:col-span-3">
-                    <x-label for="customer" :value="__('Customer')" class="text-xs" />
-                    <select wire:model="customer" wire:change="refreshPreview" id="customer" name="customer"
-                        class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400">
-                        <option value="">Select customer</option>
-                        @foreach ($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->company }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mt-2 md:col-span-2">
-                    <x-label for="rate_to_customer" :value="__('Rate C.')" class="text-xs" />
-                    <x-input wire:input="refreshPreview" wire:model="rate_to_customer" id="rate_to_customer"
-                        type="text" name="rate_to_customer" class="block mt-1 w-full" />
-                </div>
-                <div class="mt-2 md:col-span-1">
-                    <x-label for="currency" :value="__('Currency')" class="text-xs" />
-                    <select wire:model="currency" wire:change="refreshPreview" id="currency" name="currency"
-                        class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400">
-                        <option value="USD">USD</option>
-                        <option value="MXN">MXN</option>
-                    </select>
-                </div>
-                <div class="mt-2 md:col-span-2">
-                    <x-label for="billing_currency_reference" :value="__('Billing C. Ref.')" class="text-xs" />
-                    <x-input wire:input="refreshPreview" wire:model="billing_currency_reference"
-                        id="billing_currency_reference" type="text" name="billing_currency_reference"
-                        class="block mt-1 w-full" />
-                </div>
-                <div class="mt-2 md:col-span-2">
-                    <x-label for="pickup_number" :value="__('Pickup No.')" class="text-xs" />
-                    <x-input wire:input="refreshPreview" wire:model="pickup_number" id="pickup_number" type="text"
-                        name="pickup_number" class="block mt-1 w-full" />
-                </div>
-                <div class="mt-2 md:col-span-2">
-                    <x-label for="shipment_status" :value="__('Shipment Status')" class="text-xs" />
-                    <select wire:model="shipment_status" wire:change="refreshPreview" id="shipment_status"
-                        name="shipment_status"
-                        class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400">
-                        <option value="">Select status</option>
-                        @foreach ($shipmentStatuses as $status)
-                            <option value="{{ $status->id }}">{{ $status->name }}</option>
-                        @endforeach
-                    </select>
-                </div> --}}
-
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">
                 <!-- Service Data-->
@@ -80,6 +25,7 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="mt-8 ml-3 md:col-span-6">
                     <div class="flex items-center space-x-4">
                         <label class="flex items-center space-x-2">
@@ -109,6 +55,117 @@
                     <x-input wire:model="un_number" wire:input="refreshPreview" id="un_number" type="text"
                         name="un_number" placeholder="UN Num" class="block mt-1 w-full" />
                 </div>
+                <!-- URGENCY LTL Section -->
+                @php
+                    $selectedService = $service_details->firstWhere('id', $service_detail_id);
+                @endphp
+
+                @if (
+                    $selectedService &&
+                        (str_contains($selectedService->name, 'LTL') || str_contains($selectedService->name, 'Air Freight')))
+                        <div class="mt-2 md:col-span-12">
+                            <h2 class="text-red-500 font-bold mb-1">Urgency LTL</h2>
+                            <hr>
+                        </div>
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="urgency_type" :value="__('Urgency Type')" class="text-xs" />
+                        <select wire:model="urgency_type" wire:change="refreshPreview" id="urgency_type"
+                            name="urgency_type"
+                            class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400">
+                            <option value="">Select Urgency Type</option>
+                            @foreach ($urgency_types as $type)
+                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="emergency_company" :value="__('Emergency Company')" class="text-xs" />
+                        <x-input wire:model="emergency_company" wire:input="refreshPreview" id="emergency_company"
+                            type="text" name="emergency_company" placeholder="Enter Emergency Company"
+                            class="block mt-1 w-full" />
+                    </div>
+
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="company_id" :value="__('Company ID')" class="text-xs" />
+                        <x-input wire:model="company_id" wire:input="refreshPreview" id="company_id" type="text"
+                            name="company_id" placeholder="Enter Company ID" class="block mt-1 w-full" />
+                    </div>
+
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="phone" :value="__('Phone')" class="text-xs" />
+                        <x-input wire:model="phone" wire:input="refreshPreview" id="phone" type="text"
+                            name="phone" placeholder="Enter Phone Number" class="block mt-1 w-full" />
+                    </div>
+                @endif
+
+                @php
+                    $selectedService = $service_details->firstWhere('id', $service_detail_id);
+                @endphp
+
+                @if ($selectedService && str_contains($selectedService->name, 'Container Drayage'))
+                    <div class="mt-2 md:col-span-12">
+                        <h2 class="text-red-500 font-bold mb-1">Container Drayage</h2>
+                        <hr>
+                    </div>
+                    <!-- Modalidad -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_modality" :value="__('Modalidad')" class="text-xs" />
+                        <select wire:model="container_modality" wire:change="refreshPreview" id="container_modality"
+                            name="container_modality"
+                            class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800">
+                            <option value="">Select Modalidad</option>
+                            <option value="single">Single</option>
+                            <option value="full">Full</option>
+                        </select>
+                    </div>
+                    <!-- Container Number -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_number" :value="__('Container Number')" class="text-xs" />
+                        <x-input wire:model="container_number" wire:input="refreshPreview" id="container_number"
+                            type="text" name="container_number" placeholder="Enter Container Number"
+                            class="block mt-1 w-full" />
+                    </div>
+                    <!-- Container Size -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_size" :value="__('Container Size')" class="text-xs" />
+                        <x-input wire:model="container_size" wire:input="refreshPreview" id="container_size"
+                            type="text" name="container_size" placeholder="Enter Container Size"
+                            class="block mt-1 w-full" />
+                    </div>
+                    <!-- Container Weight -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_weight" :value="__('Container Weight')" class="text-xs" />
+                        <x-input wire:model="container_weight" wire:input="refreshPreview" id="container_weight"
+                            type="number" step="0.01" name="container_weight" placeholder="Enter Weight"
+                            class="block mt-1 w-full" />
+                    </div>
+                    <!-- Unit of Measure -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_uom" :value="__('Unit of Measure')" class="text-xs" />
+                        <select wire:model="container_uom" wire:change="refreshPreview" id="container_uom"
+                            name="container_uom"
+                            class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800">
+                            <option value="">Select UOM</option>
+                            @foreach ($uom_weight_options as $option)
+                                <option value="{{ $option->id }}">{{ $option->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Material Type -->
+                    <div class="mt-2 md:col-span-3">
+                        <x-label for="container_material_type" :value="__('Material Type')" class="text-xs" />
+                        <select wire:model="container_material_type" wire:change="refreshPreview"
+                            id="container_material_type" name="container_material_type"
+                            class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800">
+                            <option value="">Select Material Type</option>
+                            @foreach ($materialTypes as $material)
+                                <option value="{{ $material->id }}">{{ $material->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
+
 
                 <!-- Service Cargo -->
                 <div class="divisor mt-5 md:col-span-12">
@@ -151,11 +208,12 @@
                 </div>
                 <div class="mt-2 md:col-span-2">
                     <x-label for="count" :value="__('Count')" class="text-xs" />
-                    <x-input wire:model="count" wire:input="refreshPreview" id="count" type="number" name="count"
-                        placeholder="Enter count" class="block mt-1 w-full" />
+                    <x-input wire:model="count" wire:input="refreshPreview" id="count" type="number"
+                        name="count" placeholder="Enter count" class="block mt-1 w-full" />
                 </div>
                 <div class="mt-2 md:col-span-2">
-                    <div x-data="{ on: @entangle('stackable') }" wire:change="refreshPreview" class="mt-6 flex items-center space-x-2">
+                    <div x-data="{ on: @entangle('stackable') }" wire:change="refreshPreview"
+                        class="mt-6 flex items-center space-x-2">
                         <div class="flex items-center">
                             <label class="flex items-center cursor-pointer">
                                 <div class="relative">
@@ -171,9 +229,6 @@
                         <span class="text-gray-700 font-medium text-xs" x-text="on ? 'YES' : 'NO'"></span>
                     </div>
                 </div>
-
-
-
                 <!-- Weight -->
                 <div class="mt-2 md:col-span-2">
                     <x-label for="weight" :value="__('Weight')" class="text-xs" />
@@ -190,21 +245,18 @@
                         @endforeach
                     </select>
                 </div>
-
                 <!-- Length -->
                 <div class="mt-2 md:col-span-2">
                     <x-label for="length" :value="__('Length')" class="text-xs" />
                     <x-input wire:model="length" wire:input="refreshPreview" id="length" type="number"
                         step="0.01" name="length" placeholder="Enter length" class="block mt-1 w-full" />
                 </div>
-
                 <!-- Width -->
                 <div class="mt-2 md:col-span-2">
                     <x-label for="width" :value="__('Width')" class="text-xs" />
                     <x-input wire:model="width" wire:input="refreshPreview" id="width" type="number"
                         step="0.01" name="width" placeholder="Enter width" class="block mt-1 w-full" />
                 </div>
-
                 <!-- Height -->
                 <div class="mt-2 md:col-span-2">
                     <x-label for="height" :value="__('Height')" class="text-xs" />
@@ -222,7 +274,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <!-- Total Yards -->
                 <div class="mt-2 md:col-span-2">
                     <x-label for="total_yards" :value="__('Total Yards')" class="text-xs" />
@@ -232,11 +283,10 @@
                 </div>
 
                 <div class="divisor mt-5 mb-4 md:col-span-12">
-
                     <hr>
                 </div>
 
-                <livewire:shipper-consignee-section :stations="$stations" />
+                <livewire:shipper-consignee-section :stations="$stations" :pickup_station="$pickup_station" :consignee_station="$consignee_station" />
 
             </div>
         </div>
@@ -262,6 +312,35 @@
                 <p class="text-xs"><strong>{{ __('Team Driver:') }}</strong> {{ $team_driver ? 'Yes' : 'No' }}</p>
                 <p class="text-xs"><strong>{{ __('Round Trip:') }}</strong> {{ $round_trip ? 'Yes' : 'No' }}</p>
                 <p class="text-xs"><strong>{{ __('UN Number:') }}</strong> {{ $un_number ?? 'N/A' }}</p>
+                @if (
+                    $selectedService &&
+                        (str_contains($selectedService->name, 'LTL') || str_contains($selectedService->name, 'Air Freight')))
+                    <p class="text-xs"><strong>{{ __('Urgency Type:') }}</strong>
+                        {{ $urgency_types->firstWhere('id', $urgency_type)?->name ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Emergency Company:') }}</strong>
+                        {{ $emergency_company ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Company ID:') }}</strong>
+                        {{ $company_id ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Phone:') }}</strong>
+                        {{ $phone ?? 'N/A' }}
+                    </p>
+                @endif
+                @if ($selectedService && str_contains($selectedService->name, 'Container Drayage'))
+                    <p class="text-xs"><strong>{{ __('Modalidad:') }}</strong> {{ $container_modality ?? 'N/A' }}</p>
+                    <p class="text-xs"><strong>{{ __('Container Number:') }}</strong>
+                        {{ $container_number ?? 'N/A' }}</p>
+                    <p class="text-xs"><strong>{{ __('Container Size:') }}</strong> {{ $container_size ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Container Weight:') }}</strong>
+                        {{ $container_weight ?? 'N/A' }}
+                        {{ $uom_weight_options->firstWhere('id', $container_uom)?->name ?? '--' }}</p>
+                    <p class="text-xs"><strong>{{ __('Material Type:') }}</strong>
+                        {{ $materialTypes->firstWhere('id', $container_material_type)?->name ?? 'N/A' }}</p>
+                @endif
+
                 <p class="text-xs"><strong>{{ __('Handling Type:') }}</strong>
                     {{ $handling_types->firstWhere('id', $handling_type)?->name ?? 'N/A' }}</p>
                 <p class="text-xs"><strong>{{ __('Material Type:') }}</strong>

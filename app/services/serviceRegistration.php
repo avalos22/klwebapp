@@ -22,6 +22,7 @@ class ServiceRegistration
             'shipment_status' => $data['shipment_status'],
             'id_service_detail' => $data['service_detail_id'],
             'cargo_id' => $data['cargo_id'], // Asignar el ID del cargo creado
+            'urgency_ltl_id' => $data['urgency_ltl_id'], // Asignar el ID del UrgencyLtl
             'rate_to_customer' => $data['rate_to_customer'],
             'currency' => $data['currency'],
             'billing_customer_reference' => $data['billing_currency_reference'],

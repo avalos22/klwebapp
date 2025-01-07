@@ -17,9 +17,11 @@ class ShipperConsigneeSection extends Component
     public $pickup_time;
     public $border_crossing_date;
 
-    public function mount($stations)
+    public function mount($stations, $pickup_station, $consignee_station)
     {
         $this->stations = $stations;
+        $this->pickup_station = $pickup_station;
+        $this->consignee_station = $consignee_station;
 
         // Inicializar estructuras de datos
         $this->shipperStopOffs = [['id' => uniqid(), 'station_id' => null]];

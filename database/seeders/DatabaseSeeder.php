@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ChargeTypeSeeder::class,
             FactoryCompaniesSeeder::class,
             ServiceDetailsSeeder::class,
+            UrgencyTypesSeeder::class,
         ]);
         
         // User::factory()->create([

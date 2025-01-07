@@ -23,5 +23,11 @@ class UrgencyLtl extends Model
     {
         return $this->belongsTo(UrgencyType::class, 'type');
     }
+
+    // Relación inversa con Service
+    public function service()
+    {
+        return $this->hasOne(Service::class, 'urgency_ltl_id');
+    }
     
 }
