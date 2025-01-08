@@ -14,6 +14,8 @@ class Service extends Model
 {
     use HasFactory;
 
+    protected $table = 'services';
+
     protected $fillable = [
         'exchange_rate_id',
         'user_id',

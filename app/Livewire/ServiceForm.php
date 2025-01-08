@@ -13,16 +13,20 @@ use App\Models\{
     MaterialType,
     FreightClass,
     UrgencyType,
+    Modality,
     Uom,
+    ExchangeRate,
 };
+
 use App\Services\{
-    ServiceRegistration,
+    // ServiceRegistration,
     CargoRegistration,
     ShipperRegistration,
     ConsigneeRegistration,
     UrgencyLtlRegistration,
     StopOffRegistration,
 };
+
 use Illuminate\Support\Facades\Log;
 
 class ServiceForm extends Component
@@ -95,12 +99,14 @@ class ServiceForm extends Component
     public $company_id;
     public $phone;
 
-    public $container_modality; // Modalidad: single / full
-    public $container_number;
-    public $container_size;
-    public $container_weight;
-    public $container_uom;
-    public $container_material_type;
+    public $modality_type;
+    public $container;
+    public $size;
+    public $modality_weight;
+    public $modality_uom;
+    public $modality_material_type;
+
+    public $disablePickupNo = false;
 
     public $isSaving = false;
 
@@ -135,7 +141,7 @@ class ServiceForm extends Component
                 $this->{$property} = $value;
             }
         }
-    }
+    } 
 
     public function handleUpdatePreview($data)
     {
@@ -168,46 +174,58 @@ class ServiceForm extends Component
         if ($this->isSaving) {
             return; 
         }
-
+    
         $this->isSaving = true;
-
+    
         try {
-            // dd($this->shipperStopOffs);
-
-            $this->validateData(); // Valida los datos antes de proceder
-
-            // Register cargo debe ser el primer registro ya que se necesita el id para el servicio 
-            $cargo = CargoRegistration::createCargo($this->getCargoData());
-            $urgencyLtl = UrgencyLtlRegistration::createUrgencyLtl($this->getUrgencyLtlData());
-            
-            if (!$urgencyLtl || !$urgencyLtl->id) {
-                throw new \Exception('Failed to create UrgencyLtl or ID is missing.');
+            $this->validateData(); // Validación de datos
+    
+            // Obtiene el servicio seleccionado
+            $selectedService = $this->service_details->firstWhere('id', $this->service_detail_id);
+    
+            if (!$selectedService) {
+                throw new \Exception('Invalid service selected.');
             }
-            // Register service
-            $serviceData = $this->getServiceData($cargo->id);
-            $serviceData['urgency_ltl_id'] = $urgencyLtl->id;
-
-            $service = ServiceRegistration::createService($serviceData);
+    
+            // Registra UrgencyLtl si aplica
+            $urgencyLtlData = $this->getUrgencyLtlData($selectedService);
+            $urgencyLtl = $urgencyLtlData ? UrgencyLtlRegistration::createUrgencyLtl($urgencyLtlData) : null;
+    
+            // Registra Modality si aplica
+            $modalityData = $this->getModalityData($selectedService);
+            $modality = $modalityData ? Modality::create($modalityData) : null;
+    
+            // Registra Cargo si aplica
+            $cargo = null;
+            if (!$this->isServiceExemptFromCargo($selectedService)) {
+                $cargo = CargoRegistration::createCargo($this->getCargoData());
+                if (!$cargo || !$cargo->id) {
+                    throw new \Exception('Failed to create Cargo or ID is missing.');
+                }
+            }
+    
+            // Prepara los datos del servicio
+            $serviceData = $this->getServiceData($cargo?->id, $urgencyLtl, $modality);
+    
+            // Registra el servicio
+            $service = Service::create($serviceData);
             $this->service_id = $service->id;
-
-            // Register shipper
-            $shipper = ShipperRegistration::createShipper($this->getShipperData());
-            // Register consignee
-            $consignee = ConsigneeRegistration::createConsignee($this->getConsigneeData());
-            // Registrar stop-offs
+    
+            // Registra shipper, consignee y stop-offs
+            ShipperRegistration::createShipper($this->getShipperData());
+            ConsigneeRegistration::createConsignee($this->getConsigneeData());
             $this->registerStopOffs();
-
+    
             session()->flash('message', 'Service registered successfully!');
-
-            // Redirige a la pantalla inicial
-            return redirect()->route('dashboard'); // Cambia 'home' por el nombre de tu ruta inicial
-
+            return redirect()->route('dashboard'); 
+    
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         } finally {
             $this->isSaving = false;
         }
     }
+    
 
     private function validateData()
     {
@@ -218,6 +236,24 @@ class ServiceForm extends Component
         if (empty($this->shipperStopOffs) || empty($this->consigneeStopOffs)) {
             throw new \Exception('Stop-offs for shipper and consignee are required.');
         }
+    }
+
+    private function isServiceExemptFromCargo($selectedService)
+    {
+        $exemptServices = [
+            'Container Drayage',
+            'Trailer Rental',
+            'Us Customs Broker',
+            'Transfer',
+        ];
+
+        foreach ($exemptServices as $exemptService) {
+            if (str_contains($selectedService->name, $exemptService)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function getCargoData()
@@ -237,38 +273,71 @@ class ServiceForm extends Component
             'total_yards' => $this->total_yards,
         ];
     }
+    
 
-    private function getUrgencyLtlData()
+    private function getUrgencyLtlData($selectedService)
     {
-        return [
-            'type' => $this->urgency_type,
-            'emergency_company' => $this->emergency_company,
-            'company_ID' => $this->company_id,
-            'phone' => $this->phone,
-        ];
+        // Verifica si el servicio seleccionado requiere UrgencyLtl
+        if (str_contains($selectedService->name, 'LTL') || str_contains($selectedService->name, 'Air Freight')) {
+            return [
+                'type' => $this->urgency_type,
+                'emergency_company' => $this->emergency_company,
+                'company_ID' => $this->company_id,
+                'phone' => $this->phone,
+            ];
+        }
+    
+        return null; // Si no aplica, devuelve null
     }
 
-    private function getServiceData($cargoId)
+    private function getModalityData($selectedService)
     {
+        // Verifica si el servicio seleccionado requiere Modality
+        if (str_contains($selectedService->name, 'Container Drayage')) {
+            return [
+                'type' => $this->modality_type,
+                'container' => $this->container,
+                'size' => $this->size,
+                'weight' => $this->modality_weight,
+                'uom' => $this->modality_uom,
+                'material_type' => $this->modality_material_type,
+            ];
+        }
+
+        return null; // Si no aplica, devuelve null
+    }
+
+
+    private function getServiceData($cargoId = null, $urgencyLtl = null, $modality = null)
+    {
+        $latestExchangeRate = ExchangeRate::latest('effective_date')->first();
+    
         return [
+            'exchange_rate_id' => $latestExchangeRate->id ?? null,
             'user_id' => auth()->id(),
-            'customer' => $this->customer,
+            'business_directory_id' => $this->customer,
             'shipment_status' => $this->shipment_status,
-            'service_detail_id' => $this->service_detail_id,
-            'cargo_id' => $cargoId,
+            'id_service_detail' => $this->service_detail_id,
+            'cargo_id' => $cargoId, // Puede ser null si el servicio no requiere cargo
             'rate_to_customer' => $this->rate_to_customer,
             'currency' => $this->currency,
-            'billing_currency_reference' => $this->billing_currency_reference,
+            'billing_customer_reference' => $this->billing_currency_reference,
             'pickup_number' => $this->pickup_number,
             'expedited' => $this->expedited,
             'hazmat' => $this->hazmat,
             'team_driver' => $this->team_driver,
             'round_trip' => $this->round_trip,
             'un_number' => $this->un_number,
-            'urgency_ltl_id' => $this->urgency_type,
+            'urgency_ltl_id' => $urgencyLtl?->id ?? null,
+            'modality_id' => $modality?->id ?? null,
+            'manual_status' => null,
+            'time_status' => null,
+            'eta_delivery_status' => null,
+            'notes_status' => null,
+            'sub_services' => null,
         ];
     }
-
+    
     private function getShipperData()
     {
         return [
@@ -390,6 +459,16 @@ class ServiceForm extends Component
         }
     }
 
+    public function updatedServiceDetailId($value)
+    {
+        $disableServiceIds = [3, 7, 8, 9, 10]; // IDs que deshabilitan el Pickup No
+        $this->disablePickupNo = in_array((int)$value, $disableServiceIds);
+
+        // Enviar evento al componente hijo
+        $this->dispatch('updateDisablePickupNo', $this->disablePickupNo);
+    }
+    
+
     public function render()
     {
         return view('services.service-form', [
@@ -398,6 +477,7 @@ class ServiceForm extends Component
             'shipment_status' => $this->shipment_status,
             'selectedCustomer' => $this->selectedCustomer,
             'selectedShipmentStatus' => $this->selectedShipmentStatus,
+            'service_details' => $this->service_details
         ]);
     }
 

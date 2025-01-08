@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-// use App\Livewire\ServiceFormBase;
 use App\Models\BusinessDirectory;
 use App\Models\ShipmentStatus;
 
@@ -20,12 +19,31 @@ class CustomerInfo extends Component
     public $selectedShipmentStatus;
     public $customers;
 
+    public $disablePickupNo = false;
+
+    protected $listeners = [
+        'updateDisablePickupNo' => 'handleDisablePickupNo',
+    ];
+
     public function mount($customer = null, $shipment_status = null)
     {
         $this->customers = BusinessDirectory::byType('customer')->get();
         $this->shipmentStatuses = ShipmentStatus::all();
         $this->customer = $customer;
         $this->shipment_status = $shipment_status;
+    }
+
+    public function handleDisablePickupNo($disablePickupNo)
+    {
+        $this->disablePickupNo = $disablePickupNo;
+    }
+
+    public function updatedDisablePickupNo($value)
+    {
+        if ($value) {
+            // Si se deshabilita, elimina el contenido del campo
+            $this->pickup_number = null;
+        }
     }
 
     public function updated($propertyName)

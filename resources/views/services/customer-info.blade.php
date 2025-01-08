@@ -33,10 +33,17 @@
         <x-input wire:input="refreshPreview" wire:model="billing_currency_reference" id="billing_currency_reference"
             type="text" name="billing_currency_reference" class="block mt-1 w-full" />
     </div>
+
     <div class="mt-2 md:col-span-2">
         <x-label for="pickup_number" :value="__('Pickup No.')" class="text-xs" />
-        <x-input wire:input="refreshPreview" wire:model="pickup_number" id="pickup_number" type="text"
-            name="pickup_number" class="block mt-1 w-full" />
+        <x-input 
+        wire:model="pickup_number" 
+        id="pickup_number" 
+        type="text" 
+        name="pickup_number" 
+        class="block mt-1 w-full disabled:bg-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed" 
+        :disabled="$disablePickupNo" 
+    />
     </div>
     <div class="mt-2 md:col-span-2">
         <x-label for="shipment_status" :value="__('Shipment Status')" class="text-xs" />
