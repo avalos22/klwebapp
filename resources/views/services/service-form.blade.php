@@ -4,10 +4,10 @@
 
         <div class="lg:col-span-7">
             @if ($service_detail_id != 7)
-            <!-- Customer Info -->
-            <livewire:customer-info :disable-pickup-no="$disablePickupNo" wire:model="customer" wire:model="shipment_status" />
+                <!-- Customer Info -->
+                <livewire:customer-info :disable-pickup-no="$disablePickupNo" wire:model="customer" wire:model="shipment_status" />
             @endif
-            
+
 
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-2 p-2">
@@ -23,6 +23,7 @@
                     <select wire:model="service_detail_id" wire:change="refreshPreview" id="service_detail_id"
                         name="service_detail_id"
                         class="block mt-1 w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-md text-xs text-gray-800 placeholder:text-gray-400">
+                        <option value="">Select Service Type</option>
                         @foreach ($service_details as $type)
                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                         @endforeach
@@ -300,6 +301,73 @@
 
                 <livewire:shipper-consignee-section :stations="$stations" :pickup_station="$pickup_station" :consignee_station="$consignee_station" />
 
+                @if ($service_detail_id == 1)
+
+                <!-- Sub services section -->
+                <div class="mt-5 md:col-span-12">
+                    <h2 class="text-red-500 font-bold mb-1">Sub <span class="text-black font-bold">Service</span></h2>
+                    <hr>
+                </div>
+                <div class="mt-2 md:col-span-12">
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="sub_services.domestic_usa" type="checkbox" 
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Domestic USA</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="sub_services.domestic_mx" type="checkbox" 
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Domestic MX</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="sub_services.door_to_door_import" type="checkbox" 
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Door to Door Import</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="sub_services.door_to_door_export" type="checkbox" 
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Door to Door Export</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-5 md:col-span-12">
+                    <h2 class="text-red-500 font-bold mb-1">Carrier/Customs Options</h2>
+                    <hr>
+                </div>
+                <div class="mt-2 md:col-span-12">
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="carrier_options.us_carrier" type="checkbox"
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">US Carrier</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="carrier_options.us_customs_broker" type="checkbox"
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">US Customs Broker</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="carrier_options.transfer" type="checkbox"
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Transfer</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="carrier_options.maneuvers" type="checkbox"
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Maneuvers</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input wire:model="carrier_options.mx_carrier" type="checkbox"
+                                   class="form-checkbox text-green-500 rounded focus:ring-0">
+                            <span class="text-gray-700">Mx Carrier</span>
+                        </label>
+                    </div>
+                </div>
+                
+                @endif
+                <!--end sub services section -->
             </div>
         </div>
 
@@ -308,13 +376,15 @@
             <x-label :value="__('Review')" class="font-bold" />
             <div class="border p-4">
                 @if ($service_detail_id != 7)
-                <p class="text-xs"><strong>{{ __('Customer:') }}</strong> {{ $selectedCustomer?->company ?? 'N/A' }}
-                </p>
-                <p class="text-xs"><strong>{{ __('Rate to Customer:') }}</strong> {{ $rate_to_customer ?? 'N/A' }}
-                </p>
-                <p class="text-xs"><strong>{{ __('Currency:') }}</strong> {{ $currency ?? 'N/A' }}</p>
-                <p class="text-xs"><strong>{{ __('Billing Ref:') }}</strong>
-                    {{ $billing_currency_reference ?? 'N/A' }}</p>
+                    <p class="text-xs"><strong>{{ __('Customer:') }}</strong>
+                        {{ $selectedCustomer?->company ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Rate to Customer:') }}</strong>
+                        {{ $rate_to_customer ?? 'N/A' }}
+                    </p>
+                    <p class="text-xs"><strong>{{ __('Currency:') }}</strong> {{ $currency ?? 'N/A' }}</p>
+                    <p class="text-xs"><strong>{{ __('Billing Ref:') }}</strong>
+                        {{ $billing_currency_reference ?? 'N/A' }}</p>
                 @endif
                 @if (
                     $selectedService &&
