@@ -5,36 +5,8 @@
             {{ __('FTL') }}
         </x-button> --}}
         <a href="{{ route('services.index') }}" class="inline-block bg-red-600 text-white py-2 px-4 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline">
-            {{ __('FTL') }}
+            {{ __('Add New Service') }}
         </a>
-        
-        <x-button class="bg-red-500">
-            {{ __('LTL') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('C.Drayage') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('Hand Carrier') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('Trailer Rental') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('Charter') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('Air Freight') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('Warehouse') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('C. Broker') }}
-        </x-button>
-        <x-button class="bg-red-500">
-            {{ __('D. Transfer') }}
-        </x-button>
     </div>
 
 
