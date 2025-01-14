@@ -1,7 +1,5 @@
 TABLE exchange_rates {
     id BIGINT [pk, increment]
-    currency_from ENUM('USD', 'MXN')  //-- Moneda de origen
-    currency_to ENUM('USD', 'MXN') //-- Moneda de destino
     exchange_rate DECIMAL(10, 6) //-- Tipo de cambio (puedes ajustar la precisión si es necesario)
     effective_date DATE //-- Fecha en la que el tipo de cambio es efectivo
     created_at TIMESTAMP
@@ -13,7 +11,7 @@ TABLE services { // tabla general de servicios
   id BIGINT [pk, increment]
   exchange_rate_id BIGINT [ref: > exchange_rates.id]
   user_id BIGINT [ref: > users.id]
-  business_directory_id BIGINT [ref: > business_directory.id]
+  business_directory_id BIGINT [ref: > business_directories.id]
   rate_to_customer DECIMAL
   currency ENUM('USD', 'MXN')
   billing_customer_reference VARCHAR(7)
@@ -40,28 +38,31 @@ TABLE services { // tabla general de servicios
   sub_services VARCHAR(255) //solo aplica para FTL Domestic USA, Domestic MX, door to door import, door to door export
 }
 
-Table to_collect {
-  id BIGINT [pk, increment]
-  service_id BIGINT [ref: > services.id] // Relaciona con la tabla services
-  total_shipping_cost DECIMAL
-  exchange_rate DECIMAL
-  freight_charges DECIMAL
-  accessory_charges DECIMAL
-  total_kronos_invoice DECIMAL
-  gross_profit DECIMAL
-  commission DECIMAL
-  net_profit DECIMAL
-  kronos_invoice_number DECIMAL
-  sat_kronos_invoice_number DECIMAL
-  invoice_sent ENUM('yes', 'no')
-  invoice_sent_date DATE
-  kronos_invoice_due_date DATE
-  number_of_days_overdue DECIMAL
-  payment_status ENUM('paid','pending','na')
-  payment_date DECIMAL
-  payment_addendum_attached VARCHAR
-  payment_sent ENUM('yes', 'no')
+Table collections {  
+  id BIGINT [pk, increment]             // Identificador único de la colección
+  service_id BIGINT [ref: > services.id] // Relación con la tabla de servicios
+  total_shipping_cost DECIMAL(10, 2)     // Costo total del envío
+  exchange_rate DECIMAL(10, 4)           // Tipo de cambio aplicado
+  freight_charges DECIMAL(10, 2)         // Cargos por flete
+  accessory_charges DECIMAL(10, 2)       // Cargos accesorios
+  total_kronos_invoice DECIMAL(10, 2)    // Total de la factura de Kronos
+  gross_profit DECIMAL(10, 2)            // Ganancia bruta
+  commission DECIMAL(10, 2)              // Comisión
+  net_profit DECIMAL(10, 2)              // Ganancia neta
+  kronos_invoice_number VARCHAR(255)     // Número de factura Kronos
+  sat_kronos_invoice_number VARCHAR(255) // Número de factura SAT de Kronos
+  invoice_sent ENUM('yes', 'no')         // Si la factura fue enviada
+  invoice_sent_date DATE                 // Fecha de envío de la factura
+  kronos_invoice_due_date DATE           // Fecha de vencimiento de la factura de Kronos
+  number_of_days_overdue DECIMAL(5, 2)   // Días de retraso en el pago
+  payment_status ENUM('paid', 'pending', 'na') // Estado del pago
+  payment_date DATE                      // Fecha de pago
+  payment_addendum_attached BOOLEAN      // Si el anexo de pago está adjunto
+  payment_sent ENUM('yes', 'no')         // Si el pago fue enviado
+  created_at TIMESTAMP                   // Fecha de creación
+  updated_at TIMESTAMP                   // Fecha de última actualización
 }
+
 
 Table urgency_ltl {
   id BIGINT [pk, increment]
@@ -165,7 +166,7 @@ Table stop_offs {
     id BIGINT [pk, increment]
     service_id BIGINT [ref: > services.id]
     role ENUM('shipper', 'consignee')
-    business_directory_id BIGINT [ref: > business_directory.id]
+    business_directory_id BIGINT [ref: > business_directories.id]
     position INT // Campo para manejar el orden
     created_at TIMESTAMP
     updated_at TIMESTAMP
@@ -232,7 +233,7 @@ Table carriers {
   id BIGINT [pk, increment]
   service_id BIGINT [ref: > services.id] // Relaciona con la tabla services
   carrier_detail_id BIGINT [ref: > carrier_details.id]
-  business_directory_id BIGINT [ref: > business_directory.id] // se usa en todos
+  business_directory_id BIGINT [ref: > business_directories.id] // se usa en todos
   service_date DATE // se usa en: maneuvers, us customs broker 
   tracking_number VARCHAR // se usa en: us carrier, mx carrier, supplier LTL, supplier Container Drayage, charter, Air Freight
   cost_details_id BIGINT [ref: > cost_details.id]
@@ -270,7 +271,7 @@ Table to_pay {
 
 Table service_type_carrier_brokers {
     id BIGINT [pk, increment]
-    name VARCHAR(50) // Bond creation, Entry creation, etc.
+    name VARCHAR(50) // Bond creation, Entry creation, 
     description VARCHAR(255)
     created_at TIMESTAMP
     updated_at TIMESTAMP
@@ -278,7 +279,7 @@ Table service_type_carrier_brokers {
 
 Table carrier_details {
   id BIGINT [pk, increment]
-  name ENUM('us carrier, us customs broker, transfer, maneuvers, mx carrier, supplier, etc') // Especifica el tipo de carrera
+  name VARCHAR(50) // Especifica el tipo de carrera 'us carrier, us customs broker, transfer, maneuvers, mx carrier, supplier, etc'
   description VARCHAR 
   id_service_detail BIGINT [ref: > service_details.id]
   created_at TIMESTAMP
@@ -307,12 +308,10 @@ Table trailer_rental_carrier_details {
 
 Table charter_carrier_details {
   id BIGINT [pk, increment]
-  // business_directory_id BIGINT [ref: > business_directory.id]
   pickup_date DATE
   delivery_date_requested DATE
   time TIME
   actual_delivery_time TIME
-  //carrier
   flight_number INT
   tail_number INT
   departure_date DATE
@@ -359,6 +358,7 @@ Table uoms {
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
+
 Table urgency_types {
     id BIGINT [pk, increment]
     name VARCHAR(20) // Economy, Guaranteed Delivery
@@ -368,7 +368,7 @@ Table urgency_types {
 }
 
 // DIRECTORIO 
-Table business_directory {
+Table business_directories {
   id BIGINT [pk, increment]                        // Identificador único de la entrada del directorio
   type ENUM('station', 'customer', 'supplier')     // Tipo de entrada (station, customer, supplier)
   company VARCHAR(255)                             // Nombre de la empresa
@@ -388,7 +388,7 @@ Table business_directory {
   credit_days INT                                  // Días de crédito
   credit_expiration_date DATE                      // Fecha de expiración del crédito
   free_loading_unloading_hours INT                 // Horas de carga y descarga gratuita
-  factory_company_id BIGINT [ref: > factory_company.id]
+  factory_company_id BIGINT [ref: > factory_companies.id]
   notes TEXT                                       // Notas adicionales
   add_document TEXT                                // Campo para agregar URL de documentos
   document_expiration_date DATE                    // Fecha de expiración del documento
@@ -398,7 +398,7 @@ Table business_directory {
   updated_at TIMESTAMP                             // Fecha de última actualización
 }
 
-Table factory_company {
+Table factory_companies {
   id BIGINT [pk, increment]
   name varchar
   notes varchar
@@ -408,7 +408,7 @@ Table factory_company {
 
 Table contacts {
   id BIGINT [pk, increment]                        // Identificador único del contacto
-  directory_entry_id BIGINT [ref: > business_directory.id] // Relación con la tabla de entradas del directorio
+  directory_entry_id BIGINT [ref: > business_directories.id] // Relación con la tabla de entradas del directorio
   name VARCHAR(255)                                // Nombre del contacto
   last_name VARCHAR(255)                           // Apellido del contacto
   office_phone VARCHAR(20)                         // Teléfono de la oficina
@@ -422,19 +422,11 @@ Table contacts {
 
 Table suppliers {
   id BIGINT [pk, increment]                        // Identificador único del proveedor
-  directory_entry_id BIGINT [ref: > business_directory.id] // Relación con la tabla de entradas del directorio
+  directory_entry_id BIGINT [ref: > business_directories.id] // Relación con la tabla de entradas del directorio
   mc_number VARCHAR(20)                            // Número MC
   usdot VARCHAR(20)                                // Número USDOT
   scac VARCHAR(20)                                 // Código SCAC
   caat VARCHAR(20)                                 // Código CAAT
-  container_drayage BOOLEAN                        // Servicio de transporte de contenedores
-  hand_carrier BOOLEAN                             // Servicio de mensajería
-  trailer_rental BOOLEAN                           // Alquiler de remolques
-  charter BOOLEAN                                  // Servicio de fletamento
-  air_freight BOOLEAN                              // Servicio de transporte aéreo
-  warehouse BOOLEAN                                // Servicio de almacenamiento
-  us_custom_broker BOOLEAN                         // Servicio de corredor de aduanas en EE.UU.
-  transfer BOOLEAN                                 // Servicio de transferencia
   created_at TIMESTAMP                             // Fecha de creación
   updated_at TIMESTAMP                             // Fecha de última actualización
 }
@@ -452,6 +444,15 @@ Table supplier_equipments {
   description TEXT                                 // Descripción del equipo
   created_at TIMESTAMP                             // Fecha de creación
   updated_at TIMESTAMP                             // Fecha de última actualización
+}
+
+Table tarifario {
+  id BIGINT [pk, increment]                        // Identificador único del equipo
+  supplier_id BIGINT [ref: > suppliers.id]         // Relación con la tabla de proveedores
+  // equipment VARCHAR(255)                           // Nombre o tipo del equipo
+  // description TEXT                                 // Descripción del equipo
+  // created_at TIMESTAMP                             // Fecha de creación
+  // updated_at TIMESTAMP                             // Fecha de última actualización
 }
 
 Table supplier_reviews {
@@ -478,7 +479,6 @@ Table users {
   remember_token varchar(100)
   current_team_id bigint
   profile_photo_path varchar(2048)
-  role varchar(255)
   phone VARCHAR(20)
   job_title VARCHAR(255)
   office VARCHAR(255)
