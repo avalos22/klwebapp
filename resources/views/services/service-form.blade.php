@@ -302,71 +302,67 @@
                 <livewire:shipper-consignee-section :stations="$stations" :pickup_station="$pickup_station" :consignee_station="$consignee_station" />
 
                 @if ($service_detail_id == 1)
+    <!-- Sub services section -->
+    <div class="mt-5 md:col-span-12">
+        <h2 class="text-red-500 font-bold mb-1">Sub <span class="text-black font-bold">Service</span></h2>
+        <hr>
+    </div>
+    <div class="mt-2 md:col-span-12">
+        <div class="flex items-center space-x-4">
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0"
+                       onclick="updateCarrierOptions()" id="domestic_usa">
+                <span class="text-gray-700">Domestic USA</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0"
+                       onclick="updateCarrierOptions()" id="domestic_mx">
+                <span class="text-gray-700">Domestic MX</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0"
+                       onclick="updateCarrierOptions()" id="door_to_door_import">
+                <span class="text-gray-700">Door to Door Import</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0"
+                       onclick="updateCarrierOptions()" id="door_to_door_export">
+                <span class="text-gray-700">Door to Door Export</span>
+            </label>
+        </div>
+    </div>
 
-                <!-- Sub services section -->
-                <div class="mt-5 md:col-span-12">
-                    <h2 class="text-red-500 font-bold mb-1">Sub <span class="text-black font-bold">Service</span></h2>
-                    <hr>
-                </div>
-                <div class="mt-2 md:col-span-12">
-                    <div class="flex items-center space-x-4">
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="sub_services.domestic_usa" type="checkbox" 
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Domestic USA</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="sub_services.domestic_mx" type="checkbox" 
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Domestic MX</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="sub_services.door_to_door_import" type="checkbox" 
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Door to Door Import</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="sub_services.door_to_door_export" type="checkbox" 
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Door to Door Export</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="mt-5 md:col-span-12">
-                    <h2 class="text-red-500 font-bold mb-1">Carrier/Customs Options</h2>
-                    <hr>
-                </div>
-                <div class="mt-2 md:col-span-12">
-                    <div class="flex items-center space-x-4">
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="carrier_options.us_carrier" type="checkbox"
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">US Carrier</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="carrier_options.us_customs_broker" type="checkbox"
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">US Customs Broker</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="carrier_options.transfer" type="checkbox"
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Transfer</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="carrier_options.maneuvers" type="checkbox"
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Maneuvers</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input wire:model="carrier_options.mx_carrier" type="checkbox"
-                                   class="form-checkbox text-green-500 rounded focus:ring-0">
-                            <span class="text-gray-700">Mx Carrier</span>
-                        </label>
-                    </div>
-                </div>
-                
-                @endif
+    <!-- Carrier/Customs Options section -->
+    <div class="mt-5 md:col-span-12">
+        <h2 class="text-red-500 font-bold mb-1">Carrier/Customs Options</h2>
+        <hr>
+    </div>
+    <div class="mt-2 md:col-span-12">
+        <div class="flex items-center space-x-4" id="carrier-options">
+            <label class="flex items-center space-x-2 carrier-option us_carrier hidden">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0">
+                <span class="text-gray-700">US Carrier</span>
+            </label>
+            <label class="flex items-center space-x-2 carrier-option us_customs_broker hidden">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0">
+                <span class="text-gray-700">US Customs Broker</span>
+            </label>
+            <label class="flex items-center space-x-2 carrier-option transfer hidden">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0">
+                <span class="text-gray-700">Transfer</span>
+            </label>
+            <label class="flex items-center space-x-2 carrier-option maneuvers hidden">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0">
+                <span class="text-gray-700">Maneuvers</span>
+            </label>
+            <label class="flex items-center space-x-2 carrier-option mx_carrier hidden">
+                <input type="checkbox" class="form-checkbox text-green-500 rounded focus:ring-0">
+                <span class="text-gray-700">Mx Carrier</span>
+            </label>
+        </div>
+    </div>
+@endif
+
                 <!--end sub services section -->
             </div>
         </div>
@@ -525,4 +521,40 @@
             @endif
         </div>
     </form>
+
+    <script>
+        function updateCarrierOptions() {
+            // Obtén los checkboxes seleccionados
+            const domesticUSA = document.getElementById('domestic_usa').checked;
+            const domesticMX = document.getElementById('domestic_mx').checked;
+            const doorToDoorImport = document.getElementById('door_to_door_import').checked;
+            const doorToDoorExport = document.getElementById('door_to_door_export').checked;
+    
+            // Reinicia las opciones visibles
+            document.querySelectorAll('.carrier-option').forEach(option => {
+                option.classList.add('hidden');
+            });
+    
+            // Lógica para mostrar las opciones según la selección
+            if (domesticUSA) {
+                document.querySelector('.us_carrier').classList.remove('hidden');
+                document.querySelector('.us_customs_broker').classList.remove('hidden');
+                document.querySelector('.maneuvers').classList.remove('hidden');
+            }
+    
+            if (domesticMX) {
+                document.querySelector('.mx_carrier').classList.remove('hidden');
+                document.querySelector('.transfer').classList.remove('hidden');
+            }
+    
+            if (doorToDoorImport || doorToDoorExport) {
+                document.querySelector('.us_carrier').classList.remove('hidden');
+                document.querySelector('.us_customs_broker').classList.remove('hidden');
+                document.querySelector('.transfer').classList.remove('hidden');
+                document.querySelector('.maneuvers').classList.remove('hidden');
+                document.querySelector('.mx_carrier').classList.remove('hidden');
+            }
+        }
+    </script>
+    
 </div>
